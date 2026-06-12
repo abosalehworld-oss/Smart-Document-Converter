@@ -101,13 +101,11 @@ class WordGenerator:
             self._page_count += 1
             return
         
-        # تقسيم لفقرات
-        paragraphs = text.split('\n\n')
+        # تقسيم لفقرات بناءً على الأسطر للحفاظ على التنسيق والشكل الأصلي (Titles, Lists, Signatures)
+        paragraphs = text.split('\n')
         
         for para_text in paragraphs:
             para_text = para_text.strip()
-            # السماح للوورد بالتفاف النص بشكل طبيعي داخل الفقرة
-            para_text = para_text.replace('\n', ' ')
             
             if not para_text:
                 # سطر فارغ

@@ -38,6 +38,9 @@ class ImageProcessor:
         Returns:
             صورة محسّنة كمصفوفة NumPy
         """
+        # تحديد أقصى بكسلات للحماية من انهيار الذاكرة (Zip bombs / Massive images)
+        Image.MAX_IMAGE_PIXELS = 100000000  # 100 ميجابكسل كحد أقصى (مثلاً 10000x10000)
+        
         # تحميل الصورة إذا كانت مسار
         if isinstance(image, str):
             image = self._load_image(image)
@@ -47,6 +50,15 @@ class ImageProcessor:
         
         # نسخة للعمل عليها
         processed = image.copy()
+        
+        # 0. حماية الرامات من الصور العملاقة (Downscale if too large)
+        h, w = processed.shape[:2]
+        max_dim = 4000
+        if h > max_dim or w > max_dim:
+            scale = max_dim / max(h, w)
+            new_w, new_h = int(w * scale), int(h * scale)
+            processed = cv2.resize(processed, (new_w, new_h), interpolation=cv2.INTER_AREA)
+            logger.info(f"تم تصغير الصورة العملاقة لحماية الذاكرة: {w}x{h} -> {new_w}x{new_h}")
         
         # 1. تكبير الصور الصغيرة
         processed = self._upscale_if_needed(processed)

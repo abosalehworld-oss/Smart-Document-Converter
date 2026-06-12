@@ -9,6 +9,7 @@ import fitz  # PyMuPDF
 import numpy as np
 from PIL import Image
 import io
+import os
 import logging
 
 from app.core.ocr_engine import OCREngine
@@ -49,6 +50,12 @@ class PDFProcessor:
         """
         try:
             self.close()  # إغلاق أي ملف مفتوح
+            
+            # فحص أمني لحجم الملف (حماية من ملفات PDF الخبيثة أو العملاقة)
+            if os.path.exists(file_path):
+                file_size_mb = os.path.getsize(file_path) / (1024 * 1024)
+                if file_size_mb > 500:
+                    raise ValueError(f"حجم الملف كبير جداً للعمل أوفلاين بشكل آمن ({file_size_mb:.1f} ميجابايت). الحد الأقصى 500 ميجابايت.")
             
             self._doc = fitz.open(file_path)
             
