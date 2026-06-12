@@ -176,9 +176,9 @@ TRANSLATIONS = {
         'app_subtitle': 'تحويل PDF والصور إلى Word بدقة عالية',
         
         # التبويبات
-        'tab_pdf': '📄 تحويل PDF',
-        'tab_images': '🖼️ تحويل الصور',
-        'tab_settings': '⚙️ الإعدادات',
+        'tab_pdf': 'تحويل PDF',
+        'tab_images': 'تحويل الصور',
+        'tab_settings': 'الإعدادات',
         
         # تبويب PDF
         'select_pdf': 'اختيار ملف PDF',
@@ -245,9 +245,9 @@ TRANSLATIONS = {
         'app_subtitle': 'Convert PDF & Images to Word with high accuracy',
         
         # Tabs
-        'tab_pdf': '📄 PDF Conversion',
-        'tab_images': '🖼️ Image Conversion',
-        'tab_settings': '⚙️ Settings',
+        'tab_pdf': 'PDF Conversion',
+        'tab_images': 'Image Conversion',
+        'tab_settings': 'Settings',
         
         # PDF Tab
         'select_pdf': 'Select PDF File',
