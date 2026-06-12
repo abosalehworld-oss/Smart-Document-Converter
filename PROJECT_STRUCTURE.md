@@ -70,11 +70,11 @@ where internet access is unavailable and data security is paramount.
 │  ┌──────────────────┐  ┌──────────────────────────────────┐     │
 │  │  ocr_engine.py   │  │     image_processor.py           │     │
 │  │                  │  │                                  │     │
-│  │  - Tesseract wrap  │  │  - CLAHE contrast enhancement   │     │
-│  │  - ar + en       │  │  - Gentle denoising (Arabic!)   │     │
-│  │  - Text sorting  │  │  - Adaptive binarization        │     │
+│  │  - Tesseract wrap  │  │  - LSTM-friendly Grayscale      │     │
+│  │  - Force ara+eng   │  │  - CLAHE contrast enhancement   │     │
+│  │  - Text sorting  │  │  - Gentle denoising (Arabic!)   │     │
 │  │  - Portable tess │  │  - Shadow removal (phone pics)  │     │
-│  │  - Win Monkey Ptc│  │  - Upscaling small images       │     │
+│  │  - Win Monkey Ptc│  │  - Upscaling 2000px for clarity │     │
 │  └──────────────────┘  │  - Deskewing                    │     │
 │                        └──────────────────────────────────┘     │
 │  ┌──────────────────┐  ┌──────────────────────────────────┐     │

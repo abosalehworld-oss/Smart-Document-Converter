@@ -132,12 +132,28 @@ class OCREngine:
             logger.info(f"Tesseract languages available: {available_langs}")
             
             # بناء سلسلة اللغات لـ Tesseract
-            lang_map = {'ar': 'ara', 'en': 'eng'}
-            self._tess_lang = '+'.join(
-                lang_map.get(lang, lang) for lang in self.languages
-            )
+            # إضافة 'eng' دائماً مع 'ara' لضمان قراءة الأرقام والكلمات الإنجليزية المتداخلة بشكل صحيح
+            tess_langs_set = set()
+            for lang in self.languages:
+                if lang == 'ar':
+                    tess_langs_set.add('ara')
+                    tess_langs_set.add('eng')
+                elif lang == 'en':
+                    tess_langs_set.add('eng')
+                else:
+                    tess_langs_set.add(lang)
+            
+            # ترتيب اللغات: ara ثم eng
+            sorted_langs = []
+            if 'ara' in tess_langs_set: sorted_langs.append('ara')
+            if 'eng' in tess_langs_set: sorted_langs.append('eng')
+            for l in tess_langs_set:
+                if l not in ['ara', 'eng']: sorted_langs.append(l)
+                
+            self._tess_lang = '+'.join(sorted_langs)
             
             # التحقق من توفر اللغات المطلوبة
+            lang_map = {'ar': 'ara', 'en': 'eng'}
             for lang in self.languages:
                 tess_lang = lang_map.get(lang, lang)
                 if tess_lang not in available_langs:

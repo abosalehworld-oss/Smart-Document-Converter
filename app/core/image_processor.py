@@ -73,27 +73,23 @@ class ImageProcessor:
         # 3. تصحيح الميل
         gray = self._deskew(gray)
         
-        # 4. معالجة حسب النوع
         if mode == self.MODE_PHOTO:
-            # صور الموبايل تحتاج معالجة إضافية
+            # صور الموبايل تحتاج معالجة إضافية (بدون تحويل ثنائي للحفاظ على جودة LSTM)
             gray = self._remove_shadows(gray)
-            gray = self._enhance_contrast(gray)
-            gray = self._gentle_denoise(gray, strength=8)
-            gray = self._adaptive_binarize(gray)
+            gray = self._enhance_contrast(gray, clip_limit=2.5)
+            gray = self._gentle_denoise(gray, strength=5)
         elif mode == self.MODE_HANDWRITTEN:
             # الخط اليدوي يحتاج تباين عالي وتنظيف أقل
             gray = self._enhance_contrast(gray, clip_limit=3.0)
             gray = self._gentle_denoise(gray, strength=5)
-            gray = self._adaptive_binarize(gray, block_size=15)
         elif mode == self.MODE_GRAPHIC:
             # التصاميم الملونة والإعلانات: نتجنب الـ binarize لأنه يفسد التدرجات اللونية والعلامات المائية
             # نكتفي بتحسين التباين قليلاً وترك Tesseract يتعامل معها بذكائه الداخلي (Otsu)
             gray = self._enhance_contrast(gray, clip_limit=1.5)
         else:
-            # النصوص المطبوعة - معالجة قياسية
-            gray = self._enhance_contrast(gray)
-            gray = self._gentle_denoise(gray, strength=8)
-            gray = self._adaptive_binarize(gray)
+            # النصوص المطبوعة - معالجة قياسية (ترك Tesseract يتعامل مع التدرج الرمادي)
+            gray = self._enhance_contrast(gray, clip_limit=2.0)
+            gray = self._gentle_denoise(gray, strength=5)
         
         return gray
     
@@ -125,8 +121,8 @@ class ImageProcessor:
             logger.error(f"فشل تحميل الصورة: {type(e).__name__}")
             return None
     
-    def _upscale_if_needed(self, image: np.ndarray, min_height: int = 1000) -> np.ndarray:
-        """تكبير الصور الصغيرة لتحسين دقة OCR."""
+    def _upscale_if_needed(self, image: np.ndarray, min_height: int = 2000) -> np.ndarray:
+        """تكبير الصور لتحسين دقة OCR لأن Tesseract يحتاج خطوط واضحة وكبيرة نسبياً."""
         h, w = image.shape[:2]
         
         if h < min_height:
