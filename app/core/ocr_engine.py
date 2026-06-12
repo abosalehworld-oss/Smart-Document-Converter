@@ -107,7 +107,7 @@ class OCREngine:
             
             # حل مشاكل النسخة المحمولة (TESSDATA_PREFIX و PATH)
             tesseract_dir = os.path.dirname(tesseract_path)
-            os.environ['TESSDATA_PREFIX'] = os.path.join(tesseract_dir, 'tessdata')
+            self._tessdata_prefix = os.path.join(tesseract_dir, 'tessdata')
             
             # إضافة لمسار النظام لتجاوز مشاكل المسارات العربية في Windows
             if tesseract_dir not in os.environ.get('PATH', ''):
@@ -121,8 +121,8 @@ class OCREngine:
             # عند تشغيله من واجهة رسومية (pythonw.exe) بسبب عدم توجيه stdin،
             # نقوم بفحص اللغات المتاحة يدوياً من مجلد tessdata
             available_langs = []
-            if os.path.isdir(os.environ['TESSDATA_PREFIX']):
-                for f in os.listdir(os.environ['TESSDATA_PREFIX']):
+            if os.path.isdir(self._tessdata_prefix):
+                for f in os.listdir(self._tessdata_prefix):
                     if f.endswith('.traineddata'):
                         available_langs.append(f.replace('.traineddata', ''))
             
@@ -145,6 +145,22 @@ class OCREngine:
                         f"لغة '{tess_lang}' غير متوفرة في Tesseract. "
                         f"اللغات المتاحة: {available_langs}"
                     )
+            
+            # إصلاح مشكلة pytesseract مع المسارات التي تحتوي على مسافات وحروف عربية على ويندوز
+            # pytesseract يستخدم shlex.split مع posix=False مما يبقي علامات التنصيص
+            import subprocess
+            if not hasattr(pytesseract.pytesseract, '_original_popen'):
+                pytesseract.pytesseract._original_popen = pytesseract.pytesseract.subprocess.Popen
+                
+                def popen_wrapper(*args, **kwargs):
+                    cmd_list = list(args[0])
+                    for i in range(len(cmd_list)):
+                        if cmd_list[i].startswith('"') and cmd_list[i].endswith('"'):
+                            cmd_list[i] = cmd_list[i][1:-1]
+                    new_args = (cmd_list,) + args[1:]
+                    return pytesseract.pytesseract._original_popen(*new_args, **kwargs)
+                
+                pytesseract.pytesseract.subprocess.Popen = popen_wrapper
             
             self._is_loaded = True
             
@@ -194,7 +210,7 @@ class OCREngine:
                 pil_image = image
             
             # إعدادات Tesseract المحسنة للعربي مع دعم المسارات العربية لملفات tessdata
-            tessdata_dir = os.environ.get('TESSDATA_PREFIX', '').replace('\\', '/')
+            tessdata_dir = getattr(self, '_tessdata_prefix', '').replace('\\', '/')
             custom_config = f'--tessdata-dir "{tessdata_dir}" --oem 3 --psm 6' if tessdata_dir else r'--oem 3 --psm 6'
             
             if detail == 0:
@@ -291,7 +307,7 @@ class OCREngine:
                 pil_image = image
             
             # إعدادات Tesseract المحسنة للعربي مع دعم المسارات العربية لملفات tessdata
-            tessdata_dir = os.environ.get('TESSDATA_PREFIX', '').replace('\\', '/')
+            tessdata_dir = getattr(self, '_tessdata_prefix', '').replace('\\', '/')
             custom_config = f'--tessdata-dir "{tessdata_dir}" --oem 3 --psm 6' if tessdata_dir else r'--oem 3 --psm 6'
             
             text = pytesseract.image_to_string(
