@@ -71,20 +71,20 @@ where internet access is unavailable and data security is paramount.
 │  │  ocr_engine.py   │  │     image_processor.py           │     │
 │  │                  │  │                                  │     │
 │  │  - Tesseract wrap  │  │  - CLAHE contrast enhancement   │     │
-│  │  - CPU-only mode │  │  - Gentle denoising (Arabic!)   │     │
-│  │  - ar + en       │  │  - Deskewing                    │     │
+│  │  - ar + en       │  │  - Gentle denoising (Arabic!)   │     │
 │  │  - Text sorting  │  │  - Adaptive binarization        │     │
 │  │  - Portable tess │  │  - Shadow removal (phone pics)  │     │
-│  └──────────────────┘  │  - Upscaling small images       │     │
+│  │  - Win Monkey Ptc│  │  - Upscaling small images       │     │
+│  └──────────────────┘  │  - Deskewing                    │     │
 │                        └──────────────────────────────────┘     │
 │  ┌──────────────────┐  ┌──────────────────────────────────┐     │
 │  │ pdf_processor.py │  │     word_generator.py            │     │
 │  │                  │  │                                  │     │
 │  │  - PyMuPDF/fitz  │  │  - python-docx                  │     │
-│  │  - Smart detect: │  │  - Native RTL (w:bidi)          │     │
+│  │  - Smart detect: │  │  - Native RTL & LTR Auto-switch │     │
 │  │    digital text  │  │  - Arabic CS fonts              │     │
-│  │    vs scanned    │  │  - Auto language detection      │     │
-│  │  - 300 DPI render│  │  - Page breaks                  │     │
+│  │    vs scanned    │  │  - Paragraph Structure & Wrap   │     │
+│  │  - 300 DPI render│  │  - Auto language detection      │     │
 │  │  - Page-by-page  │  │  - .docx output                 │     │
 │  └──────────────────┘  └──────────────────────────────────┘     │
 └──────────────────────────┬──────────────────────────────────────┘
