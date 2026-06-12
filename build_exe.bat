@@ -6,7 +6,6 @@ title Building Smart Document Converter...
 echo.
 echo  ============================================================
 echo   Smart Document Converter - Full Build
-echo   bناء محوّل المستندات الذكي
 echo  ============================================================
 echo.
 
