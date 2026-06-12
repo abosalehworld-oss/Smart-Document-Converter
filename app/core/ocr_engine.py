@@ -316,9 +316,17 @@ class OCREngine:
                 config=custom_config
             )
             
-            # تنظيف النص
-            lines = [line.strip() for line in text.split('\n') if line.strip()]
-            return '\n'.join(lines)
+            # تنظيف النص مع الحفاظ على الفقرات
+            import re
+            # إزالة المسافات من أطراف كل سطر
+            lines = text.split('\n')
+            cleaned_lines = [line.strip() for line in lines]
+            text = '\n'.join(cleaned_lines)
+            
+            # تقليص الأسطر الفارغة المتعددة إلى سطرين (فقرة جديدة)
+            text = re.sub(r'\n{3,}', '\n\n', text)
+            
+            return text.strip()
         except Exception as e:
             logger.error(f"فشل استخراج النص: {type(e).__name__}: {e}")
             return ""

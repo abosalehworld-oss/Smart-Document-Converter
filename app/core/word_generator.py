@@ -102,10 +102,12 @@ class WordGenerator:
             return
         
         # تقسيم لفقرات
-        paragraphs = text.split('\n')
+        paragraphs = text.split('\n\n')
         
         for para_text in paragraphs:
             para_text = para_text.strip()
+            # السماح للوورد بالتفاف النص بشكل طبيعي داخل الفقرة
+            para_text = para_text.replace('\n', ' ')
             
             if not para_text:
                 # سطر فارغ
@@ -118,13 +120,13 @@ class WordGenerator:
             # كشف اللغة وضبط الاتجاه
             lang = detect_language(para_text)
             
-            if lang in ('ar', 'mixed'):
-                # نص عربي أو مختلط - RTL
-                self._set_paragraph_rtl(paragraph)
-                paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
-            else:
+            if lang in ('en',):
                 # نص إنجليزي - LTR
                 paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            else:
+                # نص عربي أو مختلط أو غير معروف (أرقام) - RTL
+                self._set_paragraph_rtl(paragraph)
+                paragraph.alignment = WD_ALIGN_PARAGRAPH.RIGHT
             
             # إضافة النص
             run = paragraph.add_run(para_text)
