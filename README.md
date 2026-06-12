@@ -24,7 +24,7 @@ setup.bat
 run.bat
 ```
 
-## 📦 بناء النسخة المحمولة (للأجهزة السيادية)
+## 📦 بناء النسخة المحمولة (للجهات الحكومية والمؤسسات)
 
 ```bash
 # يقوم بإنشاء مجلد محمول جاهز للنقل على USB
@@ -38,7 +38,7 @@ build_portable.bat
 |-------|-------|
 | [USER_GUIDE.md](USER_GUIDE.md) | 📖 دليل المستخدم الكامل |
 | [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) | 🏗️ هيكل المشروع (للمطورين و AI) |
-| [DEPLOY_GUIDE.md](DEPLOY_GUIDE.md) | 📦 دليل نقل البرنامج للأجهزة السيادية |
+| [DEPLOY_GUIDE.md](DEPLOY_GUIDE.md) | 📦 دليل نقل البرنامج للأجهزة الحكومية والمؤسسات |
 | [SECURITY.md](SECURITY.md) | 🔒 سياسة الأمان |
 
 ## 🛠️ التقنيات
