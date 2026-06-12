@@ -17,11 +17,11 @@ from app.gui.styles import COLORS
 from app.utils.arabic_utils import tr
 
 
-# مسار ملف الإعدادات
-SETTINGS_FILE = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-    'settings.json'
-)
+# مسار ملف الإعدادات في APPDATA لضمان صلاحيات الكتابة دائماً
+appdata = os.environ.get('APPDATA', os.path.expanduser('~'))
+settings_dir = os.path.join(appdata, 'SmartDocumentConverter')
+os.makedirs(settings_dir, exist_ok=True)
+SETTINGS_FILE = os.path.join(settings_dir, 'settings.json')
 
 # الإعدادات الافتراضية
 DEFAULT_SETTINGS = {
@@ -193,6 +193,16 @@ class SettingsTab(QWidget):
         btn_row = QHBoxLayout()
         btn_row.addStretch()
         
+        self._save_msg = QLabel("")
+        self._save_msg.setStyleSheet(f"color: {COLORS['success']}; font-weight: bold;")
+        self._save_msg.hide()
+        btn_row.addWidget(self._save_msg)
+        
+        save_btn = QPushButton("💾  " + (tr('save_settings', lang) if hasattr(self, 'tr') else "حفظ الإعدادات"))
+        save_btn.setObjectName("btn_success")
+        save_btn.clicked.connect(self._manual_save)
+        btn_row.addWidget(save_btn)
+        
         reset_btn = QPushButton("🔄  " + tr('reset_settings', lang))
         reset_btn.setObjectName("btn_danger")
         reset_btn.clicked.connect(self._reset_settings)
@@ -254,3 +264,22 @@ class SettingsTab(QWidget):
         self._save_path_label.setText(DEFAULT_SETTINGS['default_save_path'])
         
         self.settings_changed.emit(self.settings)
+
+    def _manual_save(self):
+        """حفظ يدوي للإعدادات وإظهار رسالة تأكيد."""
+        save_settings(self.settings)
+        lang = self.settings.get('language', 'ar')
+        from PySide6.QtCore import QTimer
+        
+        # محاولة جلب الترجمة أو استخدام نص ثابت
+        try:
+            msg = tr('settings_saved', lang)
+        except:
+            msg = "تم حفظ الإعدادات بنجاح!" if lang == 'ar' else "Settings saved successfully!"
+            
+        self._save_msg.setText(f"✅ {msg}")
+        self._save_msg.show()
+        
+        # إخفاء الرسالة بعد 3 ثوانٍ
+        QTimer.singleShot(3000, self._save_msg.hide)
+
