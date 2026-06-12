@@ -193,8 +193,9 @@ class OCREngine:
             else:
                 pil_image = image
             
-            # إعدادات Tesseract المحسنة للعربي
-            custom_config = r'--oem 3 --psm 6'
+            # إعدادات Tesseract المحسنة للعربي مع دعم المسارات العربية لملفات tessdata
+            tessdata_dir = os.environ.get('TESSDATA_PREFIX', '').replace('\\', '/')
+            custom_config = f'--tessdata-dir "{tessdata_dir}" --oem 3 --psm 6' if tessdata_dir else r'--oem 3 --psm 6'
             
             if detail == 0:
                 # نص فقط - أبسط وأسرع
@@ -289,8 +290,9 @@ class OCREngine:
             else:
                 pil_image = image
             
-            # إعدادات Tesseract المحسنة للعربي
-            custom_config = r'--oem 3 --psm 6'
+            # إعدادات Tesseract المحسنة للعربي مع دعم المسارات العربية لملفات tessdata
+            tessdata_dir = os.environ.get('TESSDATA_PREFIX', '').replace('\\', '/')
+            custom_config = f'--tessdata-dir "{tessdata_dir}" --oem 3 --psm 6' if tessdata_dir else r'--oem 3 --psm 6'
             
             text = pytesseract.image_to_string(
                 pil_image,
