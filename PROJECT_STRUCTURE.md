@@ -118,7 +118,6 @@ where internet access is unavailable and data security is paramount.
 ├── settings.json                    # ⚙️ User settings (auto-generated, no sensitive data)
 ├── setup.bat                        # 🔧 One-click environment setup
 ├── run.bat                          # ▶️ One-click app launcher
-├── build.bat                        # 📦 PyInstaller build script
 ├── .gitignore                       # 🚫 Git ignore rules
 ├── README.md                        # 📖 Project overview
 ├── PROJECT_STRUCTURE.md             # 🏗️ THIS FILE - Architecture docs
