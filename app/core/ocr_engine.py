@@ -117,8 +117,18 @@ class OCREngine:
             pytesseract.pytesseract.tesseract_cmd = tesseract_path
             self._tesseract_cmd = tesseract_path
             
-            # التحقق من أن Tesseract يعمل واللغات متاحة
-            available_langs = pytesseract.get_languages()
+            # بدلاً من استخدام pytesseract.get_languages() الذي به خطأ (Bug)
+            # عند تشغيله من واجهة رسومية (pythonw.exe) بسبب عدم توجيه stdin،
+            # نقوم بفحص اللغات المتاحة يدوياً من مجلد tessdata
+            available_langs = []
+            if os.path.isdir(os.environ['TESSDATA_PREFIX']):
+                for f in os.listdir(os.environ['TESSDATA_PREFIX']):
+                    if f.endswith('.traineddata'):
+                        available_langs.append(f.replace('.traineddata', ''))
+            
+            if not available_langs:
+                available_langs = ['ara', 'eng', 'osd'] # اللغات الافتراضية للنسخة المحمولة
+                
             logger.info(f"Tesseract languages available: {available_langs}")
             
             # بناء سلسلة اللغات لـ Tesseract
