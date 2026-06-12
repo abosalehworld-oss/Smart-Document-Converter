@@ -61,6 +61,16 @@ def main():
     from app.utils.security import verify_no_network_imports
     
     # ============================================
+    # تثبيت أيقونة شريط المهام (Taskbar)
+    # ============================================
+    import ctypes
+    try:
+        myappid = 'sdc.smart.doc.converter.2.0.0'
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+    except Exception:
+        pass
+    
+    # ============================================
     # إنشاء تطبيق Qt
     # ============================================
     from PySide6.QtWidgets import QApplication

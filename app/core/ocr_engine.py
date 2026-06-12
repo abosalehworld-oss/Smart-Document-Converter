@@ -105,6 +105,15 @@ class OCREngine:
                     "يرجى تثبيته أو وضعه في مجلد 'tesseract' بجانب البرنامج."
                 )
             
+            # حل مشاكل النسخة المحمولة (TESSDATA_PREFIX و PATH)
+            tesseract_dir = os.path.dirname(tesseract_path)
+            os.environ['TESSDATA_PREFIX'] = os.path.join(tesseract_dir, 'tessdata')
+            
+            # إضافة لمسار النظام لتجاوز مشاكل المسارات العربية في Windows
+            if tesseract_dir not in os.environ.get('PATH', ''):
+                os.environ['PATH'] = tesseract_dir + os.pathsep + os.environ.get('PATH', '')
+            
+            # استخدام المسار المباشر، وتخطي مشاكل ترميز Windows
             pytesseract.pytesseract.tesseract_cmd = tesseract_path
             self._tesseract_cmd = tesseract_path
             
