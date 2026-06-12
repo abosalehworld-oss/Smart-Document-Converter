@@ -132,12 +132,10 @@ class OCREngine:
             logger.info(f"Tesseract languages available: {available_langs}")
             
             # بناء سلسلة اللغات لـ Tesseract
-            # إضافة 'eng' دائماً مع 'ara' لضمان قراءة الأرقام والكلمات الإنجليزية المتداخلة بشكل صحيح
             tess_langs_set = set()
             for lang in self.languages:
                 if lang == 'ar':
                     tess_langs_set.add('ara')
-                    tess_langs_set.add('eng')
                 elif lang == 'en':
                     tess_langs_set.add('eng')
                 else:
