@@ -89,8 +89,9 @@ class ImageProcessor:
         else:
             # النصوص المطبوعة (PDFs العادية والمستندات الرسمية)
             # ملاحظة هامة: محرك Tesseract 5 يعمل بتقنية LSTM التي تتدرب على تدرجات الرمادي.
-            # التحويل الثنائي الخارجي (Binarization) يدمر الحواف الناعمة للحروف ويخرب دقة التعرف في الملفات عالية الدقة.
-            # سنقوم فقط بتحسين التباين قليلاً وترك المحرك يتعامل معها بذكائه.
+            # التكبير أمر حاسم جداً للـ LSTM لتجنب تكسر الحروف العربية المطبوعة
+            gray = self._upscale_if_needed(gray, min_height=2500)
+            
             gray = self._enhance_contrast(gray, clip_limit=1.5)
             # تنظيف خفيف للشوائب
             gray = self._gentle_denoise(gray, strength=3)

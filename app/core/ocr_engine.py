@@ -224,8 +224,9 @@ class OCREngine:
                 pil_image = image
             
             # إعدادات Tesseract المحسنة للعربي مع دعم المسارات العربية لملفات tessdata
+            # تم تعديل psm إلى 6 بدلاً من 3 لمنع تداخل الأرقام والتواريخ العشوائي (هلوسة المحرك)
             tessdata_dir = getattr(self, '_tessdata_prefix', '').replace('\\', '/')
-            custom_config = f'--tessdata-dir "{tessdata_dir}" --oem 3 --psm 3' if tessdata_dir else r'--oem 3 --psm 3'
+            custom_config = f'--tessdata-dir "{tessdata_dir}" --oem 3 --psm 6' if tessdata_dir else r'--oem 3 --psm 6'
             
             if detail == 0:
                 # نص فقط - أبسط وأسرع
@@ -323,8 +324,9 @@ class OCREngine:
                 pil_image = image
             
             # إعدادات Tesseract المحسنة للعربي مع دعم المسارات العربية لملفات tessdata
+            # تم تعديل psm إلى 6 لمنع تداخل التواريخ وتكسر الأرقام
             tessdata_dir = getattr(self, '_tessdata_prefix', '').replace('\\', '/')
-            custom_config = f'--tessdata-dir "{tessdata_dir}" --oem 3 --psm 3' if tessdata_dir else r'--oem 3 --psm 3'
+            custom_config = f'--tessdata-dir "{tessdata_dir}" --oem 3 --psm 6' if tessdata_dir else r'--oem 3 --psm 6'
             
             text = pytesseract.image_to_string(
                 pil_image,
