@@ -59,6 +59,7 @@ xcopy /E /I /Q /Y "venv\Lib\site-packages\*" "%PYDIR%\Lib\site-packages\" >nul
 
 REM Copy app files
 copy /Y "main.py" "%OUTDIR%\" >nul
+copy /Y "*.md" "%OUTDIR%\" >nul
 xcopy /E /I /Q /Y "app\*" "%OUTDIR%\app\" >nul
 
 REM Copy models if they exist
