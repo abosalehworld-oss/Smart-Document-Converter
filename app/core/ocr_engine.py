@@ -109,6 +109,9 @@ class OCREngine:
             tesseract_dir = os.path.dirname(tesseract_path)
             self._tessdata_prefix = os.path.join(tesseract_dir, 'tessdata')
             
+            # تحديد TESSDATA_PREFIX في بيئة النظام مباشرة لتجنب مشاكل المسارات العربية في Tesseract
+            os.environ['TESSDATA_PREFIX'] = self._tessdata_prefix
+            
             # إضافة لمسار النظام لتجاوز مشاكل المسارات العربية في Windows
             if tesseract_dir not in os.environ.get('PATH', ''):
                 os.environ['PATH'] = tesseract_dir + os.pathsep + os.environ.get('PATH', '')
@@ -175,6 +178,20 @@ class OCREngine:
                     return pytesseract.pytesseract._original_popen(*new_args, **kwargs)
                 
                 pytesseract.pytesseract.subprocess.Popen = popen_wrapper
+            
+            # إصلاح جذري لمشكلة UnicodeDecodeError التي تتسبب في توقف البرنامج
+            # عندما يقوم Tesseract بطباعة تحذيرات بالعربية في نظام ويندوز
+            if not hasattr(pytesseract.pytesseract, '_original_get_errors'):
+                pytesseract.pytesseract._original_get_errors = pytesseract.pytesseract.get_errors
+                
+                def get_errors_wrapper(error_string):
+                    try:
+                        return pytesseract.pytesseract._original_get_errors(error_string)
+                    except UnicodeDecodeError:
+                        # في حالة فشل فك التشفير بصيغة utf-8، نستخدم الترميز الافتراضي لويندوز أو نتجاهل الأخطاء
+                        return [line for line in error_string.decode('mbcs', errors='replace').splitlines()]
+                
+                pytesseract.pytesseract.get_errors = get_errors_wrapper
             
             self._is_loaded = True
             
