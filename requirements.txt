@@ -3,10 +3,8 @@
 # إصدارات مثبتة للأمان - لا تحديثات تلقائية
 # ============================================
 
-# OCR Engine
-easyocr==1.7.2
-torch>=2.2.2,<3.0.0
-torchvision>=0.17.2,<1.0.0
+# OCR Engine (Tesseract wrapper)
+pytesseract==0.3.13
 
 # PDF Processing
 PyMuPDF==1.25.5
@@ -24,6 +22,3 @@ PySide6==6.8.3
 # Arabic Text Support
 arabic-reshaper==3.0.0
 python-bidi==0.6.6
-
-# Packaging (dev only)
-pyinstaller==6.13.0

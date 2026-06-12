@@ -38,8 +38,7 @@ def setup_logging():
     
     # تقليل ضوضاء المكتبات
     logging.getLogger('PIL').setLevel(logging.WARNING)
-    logging.getLogger('easyocr').setLevel(logging.WARNING)
-    logging.getLogger('torch').setLevel(logging.WARNING)
+    logging.getLogger('pytesseract').setLevel(logging.WARNING)
 
 
 # ============================================
@@ -52,7 +51,7 @@ def main():
     
     logger.info("=" * 50)
     logger.info("محوّل المستندات الذكي - Smart Document Converter")
-    logger.info("الإصدار: 1.0.0")
+    logger.info("الإصدار: 2.0.0")
     logger.info("الوضع: آمن - أوفلاين")
     logger.info("=" * 50)
     
@@ -75,7 +74,7 @@ def main():
     
     # إعدادات عامة
     app.setApplicationName("Smart Document Converter")
-    app.setApplicationVersion("1.0.0")
+    app.setApplicationVersion("2.0.0")
     app.setOrganizationName("SDC")
     
     # خط افتراضي

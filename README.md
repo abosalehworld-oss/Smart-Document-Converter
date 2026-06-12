@@ -12,6 +12,7 @@
 - 🔒 **آمن 100%** — لا إنترنت، لا تخزين بيانات، لا تتبع
 - 💻 **CPU فقط** — يعمل على أضعف الأجهزة بدون GPU
 - ♾️ **مجاني بلا حدود** — لا حد لعدد الملفات أو الصفحات
+- ⚡ **سريع جداً** — يعالج الصفحة الواحدة في 2-3 ثوانٍ
 
 ## 🚀 التشغيل السريع
 
@@ -23,17 +24,26 @@ setup.bat
 run.bat
 ```
 
+## 📦 بناء النسخة المحمولة (للأجهزة السيادية)
+
+```bash
+# يقوم بإنشاء مجلد محمول جاهز للنقل على USB
+build_portable.bat
+```
+النسخة المحمولة ستكون في: `dist\Portable_SmartDocConverter\`
+
 ## 📚 التوثيق
 
 | الملف | الوصف |
 |-------|-------|
 | [USER_GUIDE.md](USER_GUIDE.md) | 📖 دليل المستخدم الكامل |
 | [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) | 🏗️ هيكل المشروع (للمطورين و AI) |
+| [DEPLOY_GUIDE.md](DEPLOY_GUIDE.md) | 📦 دليل نقل البرنامج للأجهزة السيادية |
 | [SECURITY.md](SECURITY.md) | 🔒 سياسة الأمان |
 
 ## 🛠️ التقنيات
 
-EasyOCR • PyTorch • PyMuPDF • python-docx • PySide6 • OpenCV
+Tesseract OCR • PyMuPDF • python-docx • PySide6 • OpenCV • pytesseract
 
 ## 📄 الترخيص
 
