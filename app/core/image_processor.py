@@ -23,6 +23,7 @@ class ImageProcessor:
     MODE_PRINTED = 'printed'      # نصوص مطبوعة
     MODE_HANDWRITTEN = 'handwritten'  # خط يدوي
     MODE_PHOTO = 'photo'          # صور موبايل
+    MODE_GRAPHIC = 'graphic'      # تصاميم وصور ملونة
     
     def __init__(self, target_dpi: int = 300):
         self.target_dpi = target_dpi
@@ -84,6 +85,10 @@ class ImageProcessor:
             gray = self._enhance_contrast(gray, clip_limit=3.0)
             gray = self._gentle_denoise(gray, strength=5)
             gray = self._adaptive_binarize(gray, block_size=15)
+        elif mode == self.MODE_GRAPHIC:
+            # التصاميم الملونة والإعلانات: نتجنب الـ binarize لأنه يفسد التدرجات اللونية والعلامات المائية
+            # نكتفي بتحسين التباين قليلاً وترك Tesseract يتعامل معها بذكائه الداخلي (Otsu)
+            gray = self._enhance_contrast(gray, clip_limit=1.5)
         else:
             # النصوص المطبوعة - معالجة قياسية
             gray = self._enhance_contrast(gray)

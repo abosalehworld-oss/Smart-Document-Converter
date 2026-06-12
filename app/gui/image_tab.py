@@ -221,7 +221,10 @@ class ImageTab(QWidget):
         path = ensure_docx_extension(path)
         
         # تحديد الوضع
-        mode = 'handwritten' if self.settings.get('handwriting_mode', False) else 'printed'
+        if not self.settings.get('preprocessing', True):
+            mode = 'graphic'
+        else:
+            mode = 'handwritten' if self.settings.get('handwriting_mode', False) else 'printed'
         
         # إعداد الواجهة
         self._convert_btn.setEnabled(False)
