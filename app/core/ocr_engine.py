@@ -218,7 +218,8 @@ class OCREngine:
                 text = pytesseract.image_to_string(
                     pil_image,
                     lang=self._tess_lang,
-                    config=custom_config
+                    config=custom_config,
+                    timeout=180  # 3 دقائق حد أقصى للورقة لمنع التعليق
                 )
                 lines = [line.strip() for line in text.split('\n') if line.strip()]
                 return [{'text': line, 'confidence': 1.0} for line in lines]
@@ -228,7 +229,8 @@ class OCREngine:
                 pil_image,
                 lang=self._tess_lang,
                 config=custom_config,
-                output_type=pytesseract.Output.DICT
+                output_type=pytesseract.Output.DICT,
+                timeout=180  # 3 دقائق حد أقصى للورقة لمنع التعليق
             )
             
             extracted = []
@@ -313,7 +315,8 @@ class OCREngine:
             text = pytesseract.image_to_string(
                 pil_image,
                 lang=self._tess_lang,
-                config=custom_config
+                config=custom_config,
+                timeout=180  # 3 دقائق حد أقصى للورقة لمنع التعليق
             )
             
             # تنظيف النص مع الحفاظ على الفقرات

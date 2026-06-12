@@ -146,7 +146,8 @@ class PDFProcessor:
             return img_array
         except Exception as e:
             logger.error(f"فشل تحويل الصفحة لصورة: {type(e).__name__}")
-            raise
+            # في حالة فشل الصفحة، نعيد صورة بيضاء بدلاً من الانهيار
+            return np.ones((1000, 1000, 3), dtype=np.uint8) * 255
     
     def process_page(self, page_num: int, mode: str = 'printed') -> str:
         """
