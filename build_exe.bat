@@ -13,106 +13,94 @@ echo.
 REM ============================================
 REM الخطوة 0: التحقق من Python
 REM ============================================
-python --version >nul 2>&1
+py --version >nul 2>&1
 if errorlevel 1 (
-    color 0C
-    echo  ❌ خطأ: Python غير مثبت!
-    echo  ❌ Error: Python is not installed!
-    echo.
-    echo  يرجى تثبيت Python 3.11 من:
-    echo  https://www.python.org/downloads/
-    echo.
-    pause
-    exit /b 1
-)
-
-for /f "tokens=2" %%i in ('python --version 2^>^&1') do set PYVER=%%i
-echo  ✅ Python %PYVER% موجود
-echo.
-
-REM ============================================
-REM الخطوة 1: إنشاء البيئة الافتراضية
-REM ============================================
-echo  [1/5] إعداد البيئة الافتراضية...
-if not exist "venv\" (
-    python -m venv venv
+    python --version >nul 2>&1
     if errorlevel 1 (
         color 0C
-        echo  ❌ فشل إنشاء البيئة الافتراضية
+        echo  ❌ Python غير مثبت! ثبته من python.org
         pause
         exit /b 1
     )
-    echo  ✅ تم إنشاء البيئة الافتراضية
+    set PYCMD=python
 ) else (
-    echo  ✅ البيئة الافتراضية موجودة بالفعل
+    set PYCMD=py
+)
+
+for /f "tokens=2" %%i in ('%PYCMD% --version 2^>^&1') do set PYVER=%%i
+echo  ✅ Python %PYVER%
+echo.
+
+REM ============================================
+REM الخطوة 1: البيئة الافتراضية (مرة واحدة فقط)
+REM ============================================
+if not exist "venv\Scripts\activate.bat" (
+    echo  [1/5] إنشاء البيئة الافتراضية...
+    %PYCMD% -m venv venv
+    if errorlevel 1 (
+        color 0C
+        echo  ❌ فشل إنشاء البيئة
+        pause
+        exit /b 1
+    )
+    echo  ✅ تم إنشاء البيئة
+) else (
+    echo  [1/5] ✅ البيئة الافتراضية موجودة ^(تخطي^)
 )
 
 call venv\Scripts\activate.bat
 
 REM ============================================
-REM الخطوة 2: تثبيت المكتبات
+REM الخطوة 2: المكتبات (مرة واحدة فقط)
 REM ============================================
-echo.
-echo  [2/5] تثبيت المكتبات المطلوبة...
-echo  ⏳ قد يستغرق هذا 5-15 دقيقة...
-echo.
-
-pip install --no-cache-dir -r requirements.txt --quiet
+pip show easyocr >nul 2>&1
 if errorlevel 1 (
-    color 0C
-    echo  ❌ فشل تثبيت المكتبات
-    echo  تأكد من وجود اتصال بالإنترنت للتثبيت الأول
-    pause
-    exit /b 1
+    echo.
+    echo  [2/5] تثبيت المكتبات... ⏳ ^(15-30 دقيقة أول مرة^)
+    echo.
+    pip install --no-cache-dir -r requirements.txt
+    if errorlevel 1 (
+        color 0C
+        echo  ❌ فشل تثبيت المكتبات - تأكد من الإنترنت
+        pause
+        exit /b 1
+    )
+    pip install pyinstaller
+    echo  ✅ تم تثبيت المكتبات
+) else (
+    echo  [2/5] ✅ المكتبات مثبتة بالفعل ^(تخطي^)
+    pip show pyinstaller >nul 2>&1
+    if errorlevel 1 pip install pyinstaller
 )
 
-echo  ✅ تم تثبيت المكتبات
-
 REM ============================================
-REM الخطوة 3: تحميل نماذج OCR
+REM الخطوة 3: نماذج OCR (مرة واحدة فقط)
 REM ============================================
-echo.
-echo  [3/5] تحميل نماذج التعرف على النصوص...
-echo  ⏳ جاري تحميل نماذج العربي والإنجليزي (~250MB)...
-
 if not exist "models\" mkdir models
 
-python -c "
-import os, sys
-os.makedirs('models', exist_ok=True)
-print('  جاري تحميل نماذج EasyOCR...')
-try:
-    import easyocr
-    reader = easyocr.Reader(
-        ['ar', 'en'],
-        gpu=False,
-        model_storage_directory='models',
-        verbose=False
-    )
-    print('  ✅ تم تحميل النماذج بنجاح')
-except Exception as e:
-    print(f'  ❌ خطأ في تحميل النماذج: {e}')
-    sys.exit(1)
-"
-
+REM نتحقق من وجود أي ملف .pth في مجلد models
+dir /b models\*.pth >nul 2>&1
 if errorlevel 1 (
-    color 0C
-    echo  ❌ فشل تحميل نماذج OCR
-    pause
-    exit /b 1
+    echo.
+    echo  [3/5] تحميل نماذج OCR... ⏳ ^(~250MB^)
+    %PYCMD% -c "import easyocr; r=easyocr.Reader(['ar','en'],gpu=False,model_storage_directory='models',verbose=True); print('  ✅ تم تحميل النماذج')"
+    if errorlevel 1 (
+        color 0C
+        echo  ❌ فشل تحميل النماذج
+        pause
+        exit /b 1
+    )
+) else (
+    echo  [3/5] ✅ نماذج OCR موجودة ^(تخطي^)
 )
 
-echo  ✅ نماذج OCR جاهزة
-
 REM ============================================
-REM الخطوة 4: بناء الـ exe بـ PyInstaller
+REM الخطوة 4: بناء الـ exe ⚡
 REM ============================================
 echo.
-echo  [4/5] بناء الملف التنفيذي...
-echo  ⏳ قد يستغرق 5-10 دقائق...
+echo  [4/5] بناء الملف التنفيذي... ⏳ ^(3-10 دقائق^)
 echo.
 
-REM تنظيف ملفات البناء السابقة
 if exist "dist\SmartDocConverter" rmdir /s /q "dist\SmartDocConverter"
 if exist "build\SmartDocConverter" rmdir /s /q "build\SmartDocConverter"
 
@@ -120,54 +108,40 @@ pyinstaller SmartDocConverter.spec --noconfirm --clean
 
 if errorlevel 1 (
     color 0C
-    echo.
-    echo  ❌ فشل بناء الملف التنفيذي!
-    echo  راجع الأخطاء بالأعلى
+    echo  ❌ فشل البناء!
     pause
     exit /b 1
 )
 
 REM ============================================
-REM الخطوة 5: نسخ نماذج OCR للمجلد الناتج
+REM الخطوة 5: نسخ النماذج للمجلد النهائي
 REM ============================================
 echo.
-echo  [5/5] إضافة نماذج OCR للحزمة النهائية...
+echo  [5/5] تجهيز الحزمة النهائية...
 
 if exist "models" (
     if not exist "dist\SmartDocConverter\models" mkdir "dist\SmartDocConverter\models"
-    xcopy /E /I /Q "models\*" "dist\SmartDocConverter\models\" >nul 2>&1
-    echo  ✅ تم نسخ النماذج
+    xcopy /E /I /Q /Y "models\*" "dist\SmartDocConverter\models\" >nul 2>&1
 )
 
-REM ============================================
-REM إنشاء ملف تشغيل سهل للمستخدم
-REM ============================================
-echo @echo off > "dist\SmartDocConverter\تشغيل البرنامج.bat"
-echo start SmartDocConverter.exe >> "dist\SmartDocConverter\تشغيل البرنامج.bat"
+REM ملف تشغيل سهل بالعربي
+(
+echo @echo off
+echo start SmartDocConverter.exe
+) > "dist\SmartDocConverter\تشغيل البرنامج.bat"
 
-REM ============================================
-REM حساب حجم المجلد الناتج
-REM ============================================
-for /f "tokens=3" %%a in ('dir "dist\SmartDocConverter" /s ^| findstr "File(s)"') do set FILECOUNT=%%a
 echo.
 echo  ╔══════════════════════════════════════════════════╗
 echo  ║                                                  ║
-echo  ║   ✅ تم البناء بنجاح تام!                       ║
-echo  ║   ✅ Build completed successfully!               ║
+echo  ║   ✅ تم البناء بنجاح!                           ║
 echo  ║                                                  ║
-echo  ║   📁 الملف الناتج في:                           ║
-echo  ║   dist\SmartDocConverter\                        ║
+echo  ║   📁 المجلد: dist\SmartDocConverter\             ║
+echo  ║   🖱️ شغّل:   SmartDocConverter.exe               ║
 echo  ║                                                  ║
-echo  ║   🖱️ اضغط دبل كليك على:                         ║
-echo  ║   SmartDocConverter.exe                          ║
-echo  ║                                                  ║
-echo  ║   📤 انسخ مجلد SmartDocConverter كاملاً         ║
-echo  ║   لجهاز العمل وشغّل exe مباشرة                  ║
+echo  ║   📤 انسخ المجلد كامل لجهاز الشغل              ║
 echo  ║                                                  ║
 echo  ╚══════════════════════════════════════════════════╝
 echo.
 
-REM فتح المجلد الناتج تلقائياً
 explorer "dist\SmartDocConverter"
-
 pause
