@@ -54,7 +54,7 @@ class OCREngine:
             
             kwargs = {
                 'lang_list': self.languages,
-                'gpu': False,
+                'gpu': True,
                 'verbose': False,
             }
             
