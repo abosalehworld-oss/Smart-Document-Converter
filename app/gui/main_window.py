@@ -191,14 +191,14 @@ class MainWindow(QMainWindow):
         dev_layout.setContentsMargins(10, 10, 10, 10)
         dev_layout.setSpacing(4)
         
-        dev_title = QLabel("تم التطوير بواسطة:")
-        dev_title.setStyleSheet(f"color: {COLORS['text_secondary']}; font-size: 11px; border: none; background: transparent;")
-        dev_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self._dev_title = QLabel(tr('dev_by', self._current_lang))
+        self._dev_title.setStyleSheet(f"color: {COLORS['text_secondary']}; font-size: 11px; border: none; background: transparent;")
+        self._dev_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
-        dev_charity = QLabel("تم تطوير هذا العمل لوجه الله تعالى\nبشكل مجاني للعمل أوفلاين بدون إنترنت")
-        dev_charity.setStyleSheet(f"color: {COLORS['success']}; font-size: 10px; font-weight: bold; border: none; background: transparent;")
-        dev_charity.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        dev_charity.setWordWrap(True)
+        self._dev_charity = QLabel(tr('dev_charity', self._current_lang))
+        self._dev_charity.setStyleSheet(f"color: {COLORS['success']}; font-size: 10px; font-weight: bold; border: none; background: transparent;")
+        self._dev_charity.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self._dev_charity.setWordWrap(True)
         
         dev_name = QLabel("Mohamed Saleh")
         dev_name.setStyleSheet(f"color: {COLORS['primary']}; font-size: 13px; font-weight: bold; border: none; background: transparent;")
@@ -217,17 +217,17 @@ class MainWindow(QMainWindow):
         dev_links.setAlignment(Qt.AlignmentFlag.AlignCenter)
         dev_links.setStyleSheet("border: none; background: transparent;")
         
-        dev_rights = QLabel("© حقوق الملكية محفوظة 2026")
-        dev_rights.setStyleSheet(f"color: {COLORS['text_muted']}; font-size: 10px; border: none; background: transparent;")
-        dev_rights.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self._dev_rights = QLabel(tr('dev_rights', self._current_lang))
+        self._dev_rights.setStyleSheet(f"color: {COLORS['text_muted']}; font-size: 10px; border: none; background: transparent;")
+        self._dev_rights.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
-        dev_layout.addWidget(dev_charity)
-        dev_layout.addWidget(dev_title)
+        dev_layout.addWidget(self._dev_charity)
+        dev_layout.addWidget(self._dev_title)
         dev_layout.addWidget(dev_name)
         dev_layout.addWidget(dev_phone)
         dev_layout.addWidget(dev_email)
         dev_layout.addWidget(dev_links)
-        dev_layout.addWidget(dev_rights)
+        dev_layout.addWidget(self._dev_rights)
         
         layout.addWidget(dev_frame)
         
@@ -393,6 +393,16 @@ class MainWindow(QMainWindow):
         
         # تحديث شريط الحالة
         self._status_label.setText(tr('ready', lang))
+        
+        # تحديث المطور
+        self._dev_title.setText(tr('dev_by', lang))
+        self._dev_charity.setText(tr('dev_charity', lang))
+        self._dev_rights.setText(tr('dev_rights', lang))
+        
+        # تحديث التبويبات
+        self._pdf_tab.update_language(lang)
+        self._image_tab.update_language(lang)
+        self._settings_tab.update_language(lang)
     
     def _on_settings_changed(self, settings: dict):
         """معالجة تغيير الإعدادات."""

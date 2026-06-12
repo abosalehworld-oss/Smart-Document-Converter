@@ -83,13 +83,13 @@ class SettingsTab(QWidget):
         lang = self.settings.get('language', 'ar')
         
         # ===== العنوان =====
-        title = QLabel(tr('tab_settings', lang))
-        title.setObjectName("title")
-        layout.addWidget(title)
+        self._title_label = QLabel(tr('tab_settings', lang))
+        self._title_label.setObjectName("title")
+        layout.addWidget(self._title_label)
         
         # ===== إعدادات الواجهة =====
-        ui_group = QGroupBox(tr('interface_language', lang))
-        ui_form = QFormLayout(ui_group)
+        self._ui_group = QGroupBox(tr('interface_language', lang))
+        ui_form = QFormLayout(self._ui_group)
         ui_form.setSpacing(12)
         
         self._lang_combo = QComboBox()
@@ -97,13 +97,14 @@ class SettingsTab(QWidget):
         self._lang_combo.addItem("English", "en")
         self._lang_combo.setCurrentIndex(0 if lang == 'ar' else 1)
         self._lang_combo.currentIndexChanged.connect(self._on_language_changed)
-        ui_form.addRow(tr('language', lang) + ":", self._lang_combo)
+        self._lang_label = QLabel(tr('language', lang) + ":")
+        ui_form.addRow(self._lang_label, self._lang_combo)
         
-        layout.addWidget(ui_group)
+        layout.addWidget(self._ui_group)
         
         # ===== إعدادات OCR =====
-        ocr_group = QGroupBox(tr('ocr_language', lang))
-        ocr_form = QFormLayout(ocr_group)
+        self._ocr_group = QGroupBox(tr('ocr_language', lang))
+        ocr_form = QFormLayout(self._ocr_group)
         ocr_form.setSpacing(12)
         
         self._ocr_lang_combo = QComboBox()
@@ -120,7 +121,8 @@ class SettingsTab(QWidget):
             self._ocr_lang_combo.setCurrentIndex(0)
         
         self._ocr_lang_combo.currentIndexChanged.connect(self._on_settings_changed)
-        ocr_form.addRow(tr('ocr_language', lang) + ":", self._ocr_lang_combo)
+        self._ocr_lang_label = QLabel(tr('ocr_language', lang) + ":")
+        ocr_form.addRow(self._ocr_lang_label, self._ocr_lang_combo)
         
         # جودة OCR
         self._quality_combo = QComboBox()
@@ -132,7 +134,8 @@ class SettingsTab(QWidget):
         quality_idx = {'fast': 0, 'balanced': 1, 'high': 2}.get(quality, 1)
         self._quality_combo.setCurrentIndex(quality_idx)
         self._quality_combo.currentIndexChanged.connect(self._on_settings_changed)
-        ocr_form.addRow(tr('ocr_quality', lang) + ":", self._quality_combo)
+        self._quality_label = QLabel(tr('ocr_quality', lang) + ":")
+        ocr_form.addRow(self._quality_label, self._quality_combo)
         
         # وضع الخط اليدوي
         self._handwriting_check = QCheckBox(tr('handwriting_mode', lang))
@@ -146,11 +149,11 @@ class SettingsTab(QWidget):
         self._preprocess_check.toggled.connect(self._on_settings_changed)
         ocr_form.addRow("", self._preprocess_check)
         
-        layout.addWidget(ocr_group)
+        layout.addWidget(self._ocr_group)
         
         # ===== إعدادات الخط =====
-        font_group = QGroupBox(tr('font_name', lang))
-        font_form = QFormLayout(font_group)
+        self._font_group = QGroupBox(tr('font_name', lang))
+        font_form = QFormLayout(self._font_group)
         font_form.setSpacing(12)
         
         self._font_combo = QComboBox()
@@ -161,19 +164,21 @@ class SettingsTab(QWidget):
         if current_font in fonts:
             self._font_combo.setCurrentText(current_font)
         self._font_combo.currentIndexChanged.connect(self._on_settings_changed)
-        font_form.addRow(tr('font_name', lang) + ":", self._font_combo)
+        self._font_name_label = QLabel(tr('font_name', lang) + ":")
+        font_form.addRow(self._font_name_label, self._font_combo)
         
         self._font_size_spin = QSpinBox()
         self._font_size_spin.setRange(8, 36)
         self._font_size_spin.setValue(self.settings.get('font_size', 14))
         self._font_size_spin.valueChanged.connect(self._on_settings_changed)
-        font_form.addRow(tr('font_size', lang) + ":", self._font_size_spin)
+        self._font_size_label = QLabel(tr('font_size', lang) + ":")
+        font_form.addRow(self._font_size_label, self._font_size_spin)
         
-        layout.addWidget(font_group)
+        layout.addWidget(self._font_group)
         
         # ===== مسار الحفظ الافتراضي =====
-        save_group = QGroupBox(tr('default_save_path', lang))
-        save_layout_inner = QHBoxLayout(save_group)
+        self._save_group = QGroupBox(tr('default_save_path', lang))
+        save_layout_inner = QHBoxLayout(self._save_group)
         
         self._save_path_label = QLabel(
             self.settings.get('default_save_path', os.path.expanduser('~\\Documents'))
@@ -182,12 +187,12 @@ class SettingsTab(QWidget):
         self._save_path_label.setWordWrap(True)
         save_layout_inner.addWidget(self._save_path_label, 1)
         
-        browse_btn = QPushButton(tr('browse', lang))
-        browse_btn.setObjectName("btn_secondary")
-        browse_btn.clicked.connect(self._browse_default_path)
-        save_layout_inner.addWidget(browse_btn)
+        self._browse_btn = QPushButton(tr('browse', lang))
+        self._browse_btn.setObjectName("btn_secondary")
+        self._browse_btn.clicked.connect(self._browse_default_path)
+        save_layout_inner.addWidget(self._browse_btn)
         
-        layout.addWidget(save_group)
+        layout.addWidget(self._save_group)
         
         # ===== أزرار =====
         btn_row = QHBoxLayout()
@@ -198,15 +203,15 @@ class SettingsTab(QWidget):
         self._save_msg.hide()
         btn_row.addWidget(self._save_msg)
         
-        save_btn = QPushButton("💾  " + (tr('save_settings', lang) if hasattr(self, 'tr') else "حفظ الإعدادات"))
-        save_btn.setObjectName("btn_success")
-        save_btn.clicked.connect(self._manual_save)
-        btn_row.addWidget(save_btn)
+        self._save_btn = QPushButton("💾  " + (tr('save_settings', lang) if hasattr(self, 'tr') else "حفظ الإعدادات"))
+        self._save_btn.setObjectName("btn_success")
+        self._save_btn.clicked.connect(self._manual_save)
+        btn_row.addWidget(self._save_btn)
         
-        reset_btn = QPushButton("🔄  " + tr('reset_settings', lang))
-        reset_btn.setObjectName("btn_danger")
-        reset_btn.clicked.connect(self._reset_settings)
-        btn_row.addWidget(reset_btn)
+        self._reset_btn = QPushButton("🔄  " + tr('reset_settings', lang))
+        self._reset_btn.setObjectName("btn_danger")
+        self._reset_btn.clicked.connect(self._reset_settings)
+        btn_row.addWidget(self._reset_btn)
         
         layout.addLayout(btn_row)
         
@@ -282,4 +287,35 @@ class SettingsTab(QWidget):
         
         # إخفاء الرسالة بعد 3 ثوانٍ
         QTimer.singleShot(3000, self._save_msg.hide)
+        
+    def update_language(self, lang: str):
+        """تحديث نصوص الواجهة عند تغيير اللغة."""
+        self._title_label.setText(tr('tab_settings', lang))
+        
+        self._ui_group.setTitle(tr('interface_language', lang))
+        self._lang_label.setText(tr('language', lang) + ":")
+        
+        self._ocr_group.setTitle(tr('ocr_language', lang))
+        self._ocr_lang_label.setText(tr('ocr_language', lang) + ":")
+        self._ocr_lang_combo.setItemText(0, tr('both_languages', lang))
+        self._ocr_lang_combo.setItemText(1, tr('arabic_only', lang))
+        self._ocr_lang_combo.setItemText(2, tr('english_only', lang))
+        
+        self._quality_label.setText(tr('ocr_quality', lang) + ":")
+        self._quality_combo.setItemText(0, tr('quality_fast', lang))
+        self._quality_combo.setItemText(1, tr('quality_balanced', lang))
+        self._quality_combo.setItemText(2, tr('quality_high', lang))
+        
+        self._handwriting_check.setText(tr('handwriting_mode', lang))
+        self._preprocess_check.setText(tr('preprocessing', lang))
+        
+        self._font_group.setTitle(tr('font_name', lang))
+        self._font_name_label.setText(tr('font_name', lang) + ":")
+        self._font_size_label.setText(tr('font_size', lang) + ":")
+        
+        self._save_group.setTitle(tr('default_save_path', lang))
+        self._browse_btn.setText(tr('browse', lang))
+        
+        self._save_btn.setText("💾  " + tr('save_settings', lang))
+        self._reset_btn.setText("🔄  " + tr('reset_settings', lang))
 

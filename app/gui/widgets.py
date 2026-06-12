@@ -125,6 +125,10 @@ class DragDropArea(QFrame):
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.LeftButton:
             self.clicked.emit()
+            
+    def update_language(self, lang: str):
+        from app.utils.arabic_utils import tr
+        self.set_text(tr('drag_drop', lang))
 
 
 class ProgressCard(QFrame):
@@ -209,6 +213,10 @@ class ProgressCard(QFrame):
         self._cancel_btn.show()
         self._progress.setValue(0)
         self.hide()
+        
+    def update_language(self, lang: str):
+        from app.utils.arabic_utils import tr
+        self._cancel_btn.setText(tr('cancel', lang))
 
 
 class FileListWidget(QFrame):
@@ -232,11 +240,11 @@ class FileListWidget(QFrame):
         
         header.addStretch()
         
-        clear_btn = QPushButton("مسح الكل")
-        clear_btn.setObjectName("btn_secondary")
-        clear_btn.setFixedHeight(30)
-        clear_btn.clicked.connect(self.clear_files)
-        header.addWidget(clear_btn)
+        self._clear_btn = QPushButton("مسح الكل")
+        self._clear_btn.setObjectName("btn_secondary")
+        self._clear_btn.setFixedHeight(30)
+        self._clear_btn.clicked.connect(self.clear_files)
+        header.addWidget(self._clear_btn)
         
         layout.addLayout(header)
         
@@ -273,3 +281,12 @@ class FileListWidget(QFrame):
     @property
     def file_count(self) -> int:
         return len(self._files)
+
+    def update_language(self, lang: str):
+        from app.utils.arabic_utils import tr
+        self._clear_btn.setText(tr('clear_all', lang) if hasattr(self, 'tr') else ("مسح الكل" if lang == 'ar' else "Clear All"))
+        count = len(self._files)
+        if lang == 'ar':
+            self._count_label.setText(f"{count} ملفات" if count != 1 else "1 ملف")
+        else:
+            self._count_label.setText(f"{count} files" if count != 1 else "1 file")

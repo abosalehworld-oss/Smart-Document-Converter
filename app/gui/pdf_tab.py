@@ -39,9 +39,9 @@ class PDFTab(QWidget):
         layout.setContentsMargins(24, 24, 24, 24)
         
         # ===== العنوان =====
-        title = QLabel(tr('tab_pdf', self.settings.get('language', 'ar')))
-        title.setObjectName("title")
-        layout.addWidget(title)
+        self._title_label = QLabel(tr('tab_pdf', self.settings.get('language', 'ar')))
+        self._title_label.setObjectName("title")
+        layout.addWidget(self._title_label)
         
         # ===== بطاقة اختيار الملف =====
         file_card = QFrame()
@@ -83,9 +83,9 @@ class PDFTab(QWidget):
         
         pages_row.addSpacing(20)
         
-        from_label = QLabel("من:")
-        from_label.setStyleSheet(f"color: {COLORS['text_secondary']};")
-        pages_row.addWidget(from_label)
+        self._from_label = QLabel("من:")
+        self._from_label.setStyleSheet(f"color: {COLORS['text_secondary']};")
+        pages_row.addWidget(self._from_label)
         
         self._from_page = QSpinBox()
         self._from_page.setMinimum(1)
@@ -94,9 +94,9 @@ class PDFTab(QWidget):
         self._from_page.setFixedWidth(80)
         pages_row.addWidget(self._from_page)
         
-        to_label = QLabel("إلى:")
-        to_label.setStyleSheet(f"color: {COLORS['text_secondary']};")
-        pages_row.addWidget(to_label)
+        self._to_label = QLabel("إلى:")
+        self._to_label.setStyleSheet(f"color: {COLORS['text_secondary']};")
+        pages_row.addWidget(self._to_label)
         
         self._to_page = QSpinBox()
         self._to_page.setMinimum(1)
@@ -123,20 +123,20 @@ class PDFTab(QWidget):
         """)
         save_layout = QHBoxLayout(save_card)
         
-        save_label = QLabel("💾  " + tr('save_location', self.settings.get('language', 'ar')) + ":")
-        save_label.setStyleSheet(f"color: {COLORS['text_secondary']}; font-size: 13px;")
-        save_layout.addWidget(save_label)
+        self._save_label = QLabel("💾  " + tr('save_location', self.settings.get('language', 'ar')) + ":")
+        self._save_label.setStyleSheet(f"color: {COLORS['text_secondary']}; font-size: 13px;")
+        save_layout.addWidget(self._save_label)
         
         self._save_path_label = QLabel(self.settings.get('default_save_path', os.path.expanduser('~\\Documents')))
         self._save_path_label.setStyleSheet(f"color: {COLORS['text_primary']}; font-size: 13px;")
         self._save_path_label.setWordWrap(True)
         save_layout.addWidget(self._save_path_label, 1)
         
-        browse_btn = QPushButton(tr('browse', self.settings.get('language', 'ar')))
-        browse_btn.setObjectName("btn_secondary")
-        browse_btn.setFixedWidth(100)
-        browse_btn.clicked.connect(self._browse_save_location)
-        save_layout.addWidget(browse_btn)
+        self._browse_btn = QPushButton(tr('browse', self.settings.get('language', 'ar')))
+        self._browse_btn.setObjectName("btn_secondary")
+        self._browse_btn.setFixedWidth(100)
+        self._browse_btn.clicked.connect(self._browse_save_location)
+        save_layout.addWidget(self._browse_btn)
         
         layout.addWidget(save_card)
         
@@ -351,5 +351,22 @@ class PDFTab(QWidget):
     
     def update_language(self, lang: str):
         """تحديث اللغة."""
-        # يتم تحديث النصوص عند إعادة بناء الواجهة
-        pass
+        self._title_label.setText(tr('tab_pdf', lang))
+        self._select_btn.setText("📄  " + tr('select_pdf', lang))
+        if not self._pdf_path:
+            self._file_info.setText(tr('no_file_selected', lang))
+        else:
+            filename = os.path.basename(self._pdf_path)
+            self._file_info.setText(f"📄 {filename}\n📝 {self._page_count} {tr('page', lang)}")
+            
+        self._all_pages_check.setText(tr('convert_all', lang))
+        self._from_label.setText(tr('from', lang) if hasattr(self, 'tr') else "من:")
+        self._to_label.setText(tr('to', lang) if hasattr(self, 'tr') else "إلى:")
+        self._save_label.setText("💾  " + tr('save_location', lang) + ":")
+        self._browse_btn.setText(tr('browse', lang))
+        self._convert_btn.setText("🚀  " + tr('start_conversion', lang))
+        self._open_file_btn.setText("📂  " + tr('open_file', lang))
+        self._open_folder_btn.setText("📁  " + tr('open_folder', lang))
+        
+        if hasattr(self._progress_card, 'update_language'):
+            self._progress_card.update_language(lang)

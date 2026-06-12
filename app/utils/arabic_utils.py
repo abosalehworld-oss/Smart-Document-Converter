@@ -189,6 +189,8 @@ TRANSLATIONS = {
         'pdf_pages': 'عدد الصفحات',
         'convert_all': 'تحويل الكل',
         'select_pages': 'اختيار صفحات',
+        'from': 'من:',
+        'to': 'إلى:',
         'start_conversion': 'بدء التحويل',
         'stop_conversion': 'إيقاف التحويل',
         
@@ -197,6 +199,7 @@ TRANSLATIONS = {
         'select_folder': 'اختيار مجلد',
         'drag_drop': 'اسحب وأفلت الصور هنا\nأو اضغط لاختيار الملفات',
         'images_count': 'عدد الصور',
+        'clear_all': 'مسح الكل',
         
         # مشترك
         'save_as': 'حفظ باسم',
@@ -241,6 +244,12 @@ TRANSLATIONS = {
         'file_saved': 'تم حفظ الملف بنجاح',
         'security_warning': 'تحذير أمني',
         'invalid_file': 'ملف غير صالح',
+        'save_settings': 'حفظ الإعدادات',
+        
+        # معلومات المطور
+        'dev_by': 'تم التطوير بواسطة:',
+        'dev_charity': 'تم تطوير هذا العمل لوجه الله تعالى\nبشكل مجاني للعمل أوفلاين بدون إنترنت',
+        'dev_rights': '© حقوق الملكية محفوظة 2026',
     },
     'en': {
         # Title
@@ -258,6 +267,8 @@ TRANSLATIONS = {
         'pdf_pages': 'Number of Pages',
         'convert_all': 'Convert All',
         'select_pages': 'Select Pages',
+        'from': 'From:',
+        'to': 'To:',
         'start_conversion': 'Start Conversion',
         'stop_conversion': 'Stop Conversion',
         
@@ -266,6 +277,7 @@ TRANSLATIONS = {
         'select_folder': 'Select Folder',
         'drag_drop': 'Drag & Drop images here\nor click to select files',
         'images_count': 'Number of Images',
+        'clear_all': 'Clear All',
         
         # Common
         'save_as': 'Save As',
@@ -310,6 +322,12 @@ TRANSLATIONS = {
         'file_saved': 'File saved successfully',
         'security_warning': 'Security Warning',
         'invalid_file': 'Invalid file',
+        'save_settings': 'Save Settings',
+        
+        # Developer Info
+        'dev_by': 'Developed by:',
+        'dev_charity': 'Developed as a charity work\n100% Free & Offline without internet',
+        'dev_rights': '© All Rights Reserved 2026',
     }
 }
 

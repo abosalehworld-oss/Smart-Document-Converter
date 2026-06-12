@@ -40,9 +40,9 @@ class ImageTab(QWidget):
         lang = self.settings.get('language', 'ar')
         
         # ===== العنوان =====
-        title = QLabel(tr('tab_images', lang))
-        title.setObjectName("title")
-        layout.addWidget(title)
+        self._title_label = QLabel(tr('tab_images', lang))
+        self._title_label.setObjectName("title")
+        layout.addWidget(self._title_label)
         
         # ===== منطقة السحب والإفلات =====
         self._drag_area = DragDropArea(
@@ -56,17 +56,17 @@ class ImageTab(QWidget):
         # ===== أزرار الاختيار =====
         btn_row = QHBoxLayout()
         
-        select_images_btn = QPushButton("🖼️  " + tr('select_images', lang))
-        select_images_btn.setObjectName("btn_secondary")
-        select_images_btn.setMinimumHeight(40)
-        select_images_btn.clicked.connect(self._select_images)
-        btn_row.addWidget(select_images_btn)
+        self._select_images_btn = QPushButton("🖼️  " + tr('select_images', lang))
+        self._select_images_btn.setObjectName("btn_secondary")
+        self._select_images_btn.setMinimumHeight(40)
+        self._select_images_btn.clicked.connect(self._select_images)
+        btn_row.addWidget(self._select_images_btn)
         
-        select_folder_btn = QPushButton("📁  " + tr('select_folder', lang))
-        select_folder_btn.setObjectName("btn_secondary")
-        select_folder_btn.setMinimumHeight(40)
-        select_folder_btn.clicked.connect(self._select_folder)
-        btn_row.addWidget(select_folder_btn)
+        self._select_folder_btn = QPushButton("📁  " + tr('select_folder', lang))
+        self._select_folder_btn.setObjectName("btn_secondary")
+        self._select_folder_btn.setMinimumHeight(40)
+        self._select_folder_btn.clicked.connect(self._select_folder)
+        btn_row.addWidget(self._select_folder_btn)
         
         btn_row.addStretch()
         layout.addLayout(btn_row)
@@ -274,3 +274,18 @@ class ImageTab(QWidget):
             folder = os.path.dirname(self._result_path)
             if os.path.exists(folder):
                 os.startfile(folder)
+                
+    def update_language(self, lang: str):
+        """تحديث نصوص الواجهة عند تغيير اللغة."""
+        self._title_label.setText(tr('tab_images', lang))
+        if hasattr(self._drag_area, 'update_language'):
+            self._drag_area.update_language(lang)
+        self._select_images_btn.setText("🖼️  " + tr('select_images', lang))
+        self._select_folder_btn.setText("📁  " + tr('select_folder', lang))
+        self._convert_btn.setText("🚀  " + tr('start_conversion', lang))
+        self._open_file_btn.setText("📂  " + tr('open_file', lang))
+        self._open_folder_btn.setText("📁  " + tr('open_folder', lang))
+        if hasattr(self._file_list, 'update_language'):
+            self._file_list.update_language(lang)
+        if hasattr(self._progress_card, 'update_language'):
+            self._progress_card.update_language(lang)
