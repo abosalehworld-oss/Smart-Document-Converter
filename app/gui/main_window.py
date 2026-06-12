@@ -195,6 +195,11 @@ class MainWindow(QMainWindow):
         dev_title.setStyleSheet(f"color: {COLORS['text_secondary']}; font-size: 11px; border: none; background: transparent;")
         dev_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
+        dev_charity = QLabel("تم تطوير هذا العمل لوجه الله تعالى\nبشكل مجاني للعمل أوفلاين بدون إنترنت")
+        dev_charity.setStyleSheet(f"color: {COLORS['success']}; font-size: 10px; font-weight: bold; border: none; background: transparent;")
+        dev_charity.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        dev_charity.setWordWrap(True)
+        
         dev_name = QLabel("Mohamed Saleh")
         dev_name.setStyleSheet(f"color: {COLORS['primary']}; font-size: 13px; font-weight: bold; border: none; background: transparent;")
         dev_name.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -207,6 +212,7 @@ class MainWindow(QMainWindow):
         dev_rights.setStyleSheet(f"color: {COLORS['text_muted']}; font-size: 10px; border: none; background: transparent;")
         dev_rights.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
+        dev_layout.addWidget(dev_charity)
         dev_layout.addWidget(dev_title)
         dev_layout.addWidget(dev_name)
         dev_layout.addWidget(dev_phone)
