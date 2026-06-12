@@ -178,12 +178,49 @@ class MainWindow(QMainWindow):
         
         layout.addStretch()
         
+        # حقوق الملكية (Developer Info)
+        dev_frame = QFrame()
+        dev_frame.setStyleSheet(f"""
+            QFrame {{
+                background-color: {COLORS['bg_card']};
+                border: 1px solid {COLORS['border']};
+                border-radius: 8px;
+            }}
+        """)
+        dev_layout = QVBoxLayout(dev_frame)
+        dev_layout.setContentsMargins(10, 10, 10, 10)
+        dev_layout.setSpacing(4)
+        
+        dev_title = QLabel("تم التطوير بواسطة:")
+        dev_title.setStyleSheet(f"color: {COLORS['text_secondary']}; font-size: 11px; border: none; background: transparent;")
+        dev_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        dev_name = QLabel("Mohamed Saleh")
+        dev_name.setStyleSheet(f"color: {COLORS['primary']}; font-size: 13px; font-weight: bold; border: none; background: transparent;")
+        dev_name.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        dev_phone = QLabel("📞 01025794796")
+        dev_phone.setStyleSheet(f"color: {COLORS['accent']}; font-size: 11px; font-weight: bold; border: none; background: transparent;")
+        dev_phone.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        dev_rights = QLabel("© حقوق الملكية محفوظة 2026")
+        dev_rights.setStyleSheet(f"color: {COLORS['text_muted']}; font-size: 10px; border: none; background: transparent;")
+        dev_rights.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        dev_layout.addWidget(dev_title)
+        dev_layout.addWidget(dev_name)
+        dev_layout.addWidget(dev_phone)
+        dev_layout.addWidget(dev_rights)
+        
+        layout.addWidget(dev_frame)
+        
         # معلومات الإصدار
-        version_label = QLabel("v1.0.0 | Offline & Secure")
+        version_label = QLabel("v2.0.0 | Offline & Secure")
         version_label.setStyleSheet(f"""
             color: {COLORS['text_muted']};
             font-size: 11px;
             border: none;
+            margin-top: 5px;
         """)
         version_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(version_label)
