@@ -1,0 +1,69 @@
+# venv/
+venv/
+env/
+.env/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+
+# Distribution / Build
+dist/
+build/
+*.egg-info/
+*.egg
+*.spec
+
+# OCR Models (large files - download locally)
+models/
+*.pth
+*.pt
+*.onnx
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# User settings (contains preferences only, not sensitive data)
+settings.json
+
+# Document files (NEVER commit sensitive documents)
+*.pdf
+*.docx
+*.doc
+*.png
+*.jpg
+*.jpeg
+*.bmp
+*.tiff
+*.tif
+*.webp
+
+# Test files
+tests/test_samples/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Logs (we don't create log files, but just in case)
+*.log
+logs/
+
+# PyInstaller
+*.manifest
+*.spec

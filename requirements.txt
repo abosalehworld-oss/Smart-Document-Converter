@@ -1,0 +1,29 @@
+# ============================================
+# مشروع تحويل PDF والصور إلى Word
+# إصدارات مثبتة للأمان - لا تحديثات تلقائية
+# ============================================
+
+# OCR Engine
+easyocr==1.7.2
+torch==2.2.2
+torchvision==0.17.2
+
+# PDF Processing
+PyMuPDF==1.25.5
+
+# Word Document Generation
+python-docx==1.1.2
+
+# Image Processing
+opencv-python-headless==4.10.0.84
+Pillow==11.2.1
+
+# GUI Framework
+PySide6==6.8.3
+
+# Arabic Text Support
+arabic-reshaper==3.0.0
+python-bidi==0.6.6
+
+# Packaging (dev only)
+pyinstaller==6.13.0
