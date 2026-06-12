@@ -127,39 +127,7 @@ pip list --outdated          # Review (but don't auto-update!)
 | ❌ BANNED | sentry-sdk, bugsnag | Error reporting |
 | ❌ BANNED | analytics-python, mixpanel | Analytics |
 
----
 
-## 3. GitHub Repository Security / أمان المستودع
-
-### 3.1 Repository Settings
-
-- ✅ Repository MUST be **Private**
-- ✅ Enable branch protection on `main`
-- ✅ Require pull request reviews
-- ✅ Enable secret scanning alerts
-- ❌ Do NOT use GitHub Actions (no CI/CD needed for offline app)
-- ❌ Do NOT enable Dependabot (no auto-updates)
-
-### 3.2 What MUST NOT Be Committed
-
-The `.gitignore` file prevents these from being committed:
-
-- `venv/` - Virtual environment
-- `models/` - Additional models (if any)
-- `tesseract/` - Tesseract executable and language data (bundled via build script, not tracked in git)
-- `*.pyc`, `__pycache__/` - Compiled Python
-- `dist/`, `build/` - PyInstaller output
-- `settings.json` - User preferences
-- `*.pdf`, `*.docx`, `*.png`, `*.jpg` - Document files
-- `.env` - Environment variables
-
-### 3.3 No Secrets in Code
-
-- No API keys
-- No passwords
-- No tokens
-- No encryption keys
-- No hardcoded paths to sensitive directories
 
 ---
 

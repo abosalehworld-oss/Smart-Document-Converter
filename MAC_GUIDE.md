@@ -11,7 +11,6 @@
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
-
 ## الخطوة 2: تثبيت محرك Tesseract واللغة العربية
 أجهزة ماك تحتاج إلى تثبيت محرك Tesseract بشكل منفصل. في الـ Terminal، اكتب:
 ```bash
