@@ -5,8 +5,8 @@
 
 # OCR Engine
 easyocr==1.7.2
-torch==2.2.2
-torchvision==0.17.2
+torch>=2.2.2,<3.0.0
+torchvision>=0.17.2,<1.0.0
 
 # PDF Processing
 PyMuPDF==1.25.5
