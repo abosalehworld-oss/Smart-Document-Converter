@@ -153,12 +153,16 @@ class PDFProcessor:
         Returns:
             النص المستخرج
         """
-        # 1. محاولة استخراج النص الرقمي أولاً
-        if self.has_text_layer(page_num):
-            text = self.extract_digital_text(page_num)
-            if text:
-                logger.debug(f"صفحة {page_num + 1}: نص رقمي ({len(text)} حرف)")
-                return text
+        # تم إيقاف استخراج النص الرقمي المباشر لأن مكتبة PyMuPDF 
+        # تقوم بعكس الحروف العربية المركبة (مثل مح، مج) في بعض الخطوط.
+        # بدلاً من ذلك، سنجبر البرنامج على تحويل الصفحة لصورة عالية الدقة
+        # واستخدام محرك Tesseract OCR الذي يقرأ الكلمات العربية بشكل مثالي بالنظر.
+        
+        # if self.has_text_layer(page_num):
+        #     text = self.extract_digital_text(page_num)
+        #     if text:
+        #         logger.debug(f"صفحة {page_num + 1}: نص رقمي ({len(text)} حرف)")
+        #         return text
         
         # 2. استخدام OCR للصفحات الممسوحة ضوئياً
         logger.debug(f"صفحة {page_num + 1}: استخدام OCR")
