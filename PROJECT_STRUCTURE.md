@@ -70,11 +70,11 @@ where internet access is unavailable and data security is paramount.
 │  ┌──────────────────┐  ┌──────────────────────────────────┐     │
 │  │  ocr_engine.py   │  │     image_processor.py           │     │
 │  │                  │  │                                  │     │
-│  │  - EasyOCR wrap  │  │  - CLAHE contrast enhancement   │     │
+│  │  - Tesseract wrap  │  │  - CLAHE contrast enhancement   │     │
 │  │  - CPU-only mode │  │  - Gentle denoising (Arabic!)   │     │
 │  │  - ar + en       │  │  - Deskewing                    │     │
 │  │  - Text sorting  │  │  - Adaptive binarization        │     │
-│  │  - Offline models│  │  - Shadow removal (phone pics)  │     │
+│  │  - Portable tess │  │  - Shadow removal (phone pics)  │     │
 │  └──────────────────┘  │  - Upscaling small images       │     │
 │                        └──────────────────────────────────┘     │
 │  ┌──────────────────┐  ┌──────────────────────────────────┐     │
@@ -130,7 +130,7 @@ where internet access is unavailable and data security is paramount.
 │   │
 │   ├── core/                        # ⚙️ Business logic (no UI dependencies)
 │   │   ├── __init__.py
-│   │   ├── ocr_engine.py           # EasyOCR wrapper (CPU, offline)
+│   │   ├── ocr_engine.py           # Tesseract wrapper (CPU, offline)
 │   │   ├── image_processor.py      # OpenCV image enhancement
 │   │   ├── pdf_processor.py        # PyMuPDF PDF handling
 │   │   └── word_generator.py       # python-docx Word creation
@@ -154,9 +154,9 @@ where internet access is unavailable and data security is paramount.
 │   └── assets/                      # 🎨 Static resources
 │       └── (icons, fonts)
 │
-└── models/                          # 🧠 EasyOCR model files (downloaded once)
-    ├── arabic.pth                   # Arabic recognition model
-    └── english.pth                  # English recognition model
+└── tesseract/                         # 🧠 Tesseract OCR engine and data (bundled)
+    ├── tesseract.exe                # OCR executable
+    └── tessdata/                    # Language files (ara.traineddata)
 ```
 
 ---
@@ -201,8 +201,8 @@ main.py
 
 | Component | Library | Version | License | Purpose |
 |-----------|---------|---------|---------|---------|
-| OCR Engine | EasyOCR | 1.7.2 | Apache 2.0 | Text recognition (Arabic+English) |
-| Deep Learning | PyTorch | 2.2.2 | BSD | EasyOCR backend (CPU mode) |
+| OCR Engine | Tesseract | 5.x | Apache 2.0 | Text recognition (Arabic+English) |
+| Deep Learning | pytesseract | 0.3.13 | GPL | Python wrapper for Tesseract |
 | PDF Reading | PyMuPDF | 1.25.5 | AGPL | PDF → image conversion |
 | Word Writing | python-docx | 1.1.2 | MIT | .docx file creation |
 | Image Processing | OpenCV | 4.10.0 | Apache 2.0 | Image enhancement for OCR |

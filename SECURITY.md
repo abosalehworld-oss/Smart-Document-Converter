@@ -20,7 +20,8 @@ for the Smart Document Converter. **ALL contributors MUST read and follow this p
 - No telemetry, analytics, or crash reporting
 - No cloud API calls (no Google, no Azure, no AWS)
 - `security.verify_no_network_imports()` runs at startup to detect violations
-- EasyOCR models MUST be downloaded ONCE during setup, then used offline forever
+- Tesseract OCR engine and language data must be bundled with the portable app
+- No EasyOCR or PyTorch dependencies (removed for security and size reduction)
 
 **Verification**: Run Wireshark or `netstat` while the app is running — zero traffic expected.
 
@@ -88,8 +89,8 @@ Validation chain (`security.validate_file_integrity()`):
 
 ```
 # ✅ CORRECT - pinned version
-easyocr==1.7.2
-torch==2.2.2
+pytesseract==0.3.13
+PyMuPDF==1.25.5
 
 # ❌ WRONG - floating version (NEVER do this)
 easyocr>=1.7
@@ -98,9 +99,8 @@ torch
 
 ### 2.2 No Runtime Downloads (عدم التحميل أثناء التشغيل)
 
-- All pip packages installed ONCE during `setup.bat`
-- EasyOCR models downloaded ONCE, then stored locally in `models/`
-- `download_enabled=False` passed to EasyOCR after initial setup
+- All pip packages bundled inside the portable Python environment
+- Tesseract OCR engine (`tesseract.exe` and `tessdata/`) bundled in the portable app
 
 ### 2.3 Dependency Audit (فحص المكتبات)
 
@@ -114,7 +114,7 @@ pip list --outdated          # Review (but don't auto-update!)
 
 | Status | Library | Reason |
 |--------|---------|--------|
-| ✅ Allowed | easyocr, torch, torchvision | OCR engine |
+| ✅ Allowed | pytesseract, OpenCV | OCR wrapper & image processing |
 | ✅ Allowed | PyMuPDF | PDF processing |
 | ✅ Allowed | python-docx | Word generation |
 | ✅ Allowed | opencv-python-headless | Image processing |
@@ -145,7 +145,8 @@ pip list --outdated          # Review (but don't auto-update!)
 The `.gitignore` file prevents these from being committed:
 
 - `venv/` - Virtual environment
-- `models/` - OCR model files (large + should be downloaded locally)
+- `models/` - Additional models (if any)
+- `tesseract/` - Tesseract executable and language data (bundled via build script, not tracked in git)
 - `*.pyc`, `__pycache__/` - Compiled Python
 - `dist/`, `build/` - PyInstaller output
 - `settings.json` - User preferences
