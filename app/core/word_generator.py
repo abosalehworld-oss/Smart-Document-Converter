@@ -196,6 +196,9 @@ class WordGenerator:
             self._doc.save(output_path)
             logger.info(f"تم حفظ المستند: {self._page_count} صفحة")
             return output_path
+        except PermissionError:
+            logger.error(f"فشل حفظ المستند: الملف مفتوح في برنامج آخر (Permission denied)")
+            raise Exception("الملف مفتوح حالياً في برنامج آخر (مثل Microsoft Word). يرجى إغلاقه أولاً أو اختيار اسم مختلف للحفظ.")
         except Exception as e:
             logger.error(f"فشل حفظ المستند: {type(e).__name__}")
             raise
