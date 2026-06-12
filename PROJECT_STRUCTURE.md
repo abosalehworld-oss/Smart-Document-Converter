@@ -83,8 +83,8 @@ where internet access is unavailable and data security is paramount.
 │  │  - PyMuPDF/fitz  │  │  - python-docx                  │     │
 │  │  - Smart detect: │  │  - Native RTL & LTR Auto-switch │     │
 │  │    digital text  │  │  - Arabic CS fonts              │     │
-│  │    vs scanned    │  │  - Paragraph Structure & Wrap   │     │
-│  │  - 300 DPI render│  │  - Auto language detection      │     │
+│  │    vs scanned    │  │  - Exact Layout Preservation    │     │
+│  │  - 300 DPI render│  │    (Line-by-Line mapping)       │     │
 │  │  - Page-by-page  │  │  - .docx output                 │     │
 │  └──────────────────┘  └──────────────────────────────────┘     │
 └──────────────────────────┬──────────────────────────────────────┘
@@ -225,6 +225,8 @@ See [SECURITY.md](SECURITY.md) for the complete security policy.
 5. **Least privilege** - No admin rights, no Registry writes
 6. **Pinned deps** - All library versions frozen to prevent supply-chain attacks
 7. **No telemetry** - No analytics, no crash reporting, no usage tracking
+8. **RAM Protection** - Giant images (>4000px) are downscaled to prevent OOM DOS attacks
+9. **PDF Size Limits** - PDFs > 500MB are rejected to prevent system freezes
 
 ---
 
