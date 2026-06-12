@@ -65,7 +65,7 @@ def main():
     # ============================================
     from PySide6.QtWidgets import QApplication
     from PySide6.QtCore import Qt
-    from PySide6.QtGui import QFont
+    from PySide6.QtGui import QFont, QIcon
     
     # منع تكرار التطبيق
     app = QApplication.instance()
@@ -76,6 +76,11 @@ def main():
     app.setApplicationName("Smart Document Converter")
     app.setApplicationVersion("2.0.0")
     app.setOrganizationName("SDC")
+    
+    # أيقونة التطبيق
+    icon_path = os.path.join(APP_DIR, "app", "assets", "icon.png")
+    if os.path.exists(icon_path):
+        app.setWindowIcon(QIcon(icon_path))
     
     # خط افتراضي
     default_font = QFont("Segoe UI", 11)
