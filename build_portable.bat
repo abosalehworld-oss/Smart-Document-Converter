@@ -61,7 +61,7 @@ if exist "models" (
     xcopy /E /I /Q /Y "models\*" "%OUTDIR%\models\" >nul
 )
 
-echo  [7/7] Creating Run Program Script...
+echo  [7/7] Creating Run Program Script and Shortcut...
 (
 echo @echo off
 echo title Smart Document Converter
@@ -70,12 +70,35 @@ echo set PYTHONUTF8=1
 echo start "" "python\pythonw.exe" main.py
 ) > "%OUTDIR%\Run_Program.bat"
 
+REM Convert PNG to ICO if it doesn't exist
+if exist "app\assets\icon.png" (
+    if not exist "%OUTDIR%\app\assets\icon.ico" (
+        venv\Scripts\python.exe -c "from PIL import Image; img=Image.open('app\assets\icon.png'); img.save(r'%OUTDIR%\app\assets\icon.ico', format='ICO', sizes=[(256, 256), (128, 128), (64, 64), (32, 32), (16, 16)])"
+    )
+)
+
+REM Create a desktop shortcut with the correct icon using VBScript
+set VBS_FILE="%OUTDIR%\create_shortcut.vbs"
+(
+echo Set oWS = WScript.CreateObject^("WScript.Shell"^)
+echo Set fso = CreateObject^("Scripting.FileSystemObject"^)
+echo currentDir = fso.GetAbsolutePathName^("."^)
+echo sLinkFile = currentDir ^& "\Smart Document Converter.lnk"
+echo Set oLink = oWS.CreateShortcut^(sLinkFile^)
+echo oLink.TargetPath = currentDir ^& "\Run_Program.bat"
+echo oLink.WorkingDirectory = currentDir
+echo oLink.IconLocation = currentDir ^& "\app\assets\icon.ico"
+echo oLink.Save
+) > %VBS_FILE%
+cscript //nologo %VBS_FILE%
+del %VBS_FILE%
+
 echo.
 echo  ============================================================
 echo   [SUCCESS] Portable Package Created!
 echo.
 echo   Folder : %OUTDIR%
-echo   Run    : Run_Program.bat
+echo   Run    : Smart Document Converter.lnk (Shortcut)
 echo  ============================================================
 echo.
 explorer "%OUTDIR%"

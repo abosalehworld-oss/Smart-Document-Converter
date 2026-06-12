@@ -102,6 +102,8 @@ def main():
     from app.gui.main_window import MainWindow
     
     window = MainWindow()
+    if os.path.exists(icon_path):
+        window.setWindowIcon(QIcon(icon_path))
     window.show()
     
     logger.info("البرنامج يعمل بنجاح ✓")
