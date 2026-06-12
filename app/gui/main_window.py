@@ -208,6 +208,15 @@ class MainWindow(QMainWindow):
         dev_phone.setStyleSheet(f"color: {COLORS['accent']}; font-size: 11px; font-weight: bold; border: none; background: transparent;")
         dev_phone.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
+        dev_email = QLabel("📧 abosalehworld@gmail.com")
+        dev_email.setStyleSheet(f"color: {COLORS['text_secondary']}; font-size: 10px; border: none; background: transparent;")
+        dev_email.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        dev_links = QLabel("<a href='https://github.com/abosalehworld-oss/Smart-Document-Converter' style='color:#3498db;text-decoration:none;'>GitHub</a> | <a href='https://linkedin.com/in/mr-mohamed-saleh' style='color:#3498db;text-decoration:none;'>LinkedIn</a>")
+        dev_links.setOpenExternalLinks(True)
+        dev_links.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        dev_links.setStyleSheet("border: none; background: transparent;")
+        
         dev_rights = QLabel("© حقوق الملكية محفوظة 2026")
         dev_rights.setStyleSheet(f"color: {COLORS['text_muted']}; font-size: 10px; border: none; background: transparent;")
         dev_rights.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -216,6 +225,8 @@ class MainWindow(QMainWindow):
         dev_layout.addWidget(dev_title)
         dev_layout.addWidget(dev_name)
         dev_layout.addWidget(dev_phone)
+        dev_layout.addWidget(dev_email)
+        dev_layout.addWidget(dev_links)
         dev_layout.addWidget(dev_rights)
         
         layout.addWidget(dev_frame)

@@ -91,3 +91,15 @@ Portable_SmartDocConverter\
 3. ✅ الكود مفتوح ويمكن لفريق أمن المعلومات مراجعته
 4. ✅ لا يوجد أي ملف EXE مغلق - كل شيء شفاف ومكشوف
 5. ✅ لا يظهر كفيروس في أي برنامج حماية (0% False Positives)
+
+---
+
+## 👨‍💻 مطور البرنامج والدعم الفني
+
+تم تصميم وتطوير هذا النظام ليعمل بكفاءة وأمان تام كصدقة جارية.
+في حال وجود أي استفسارات تقنية أو طلبات تطوير مخصصة للجهات، يرجى التواصل مع المطور الأصلي:
+
+- 📧 **البريد الإلكتروني:** abosalehworld@gmail.com
+- 📞 **الهاتف / واتساب:** 01025794796
+- 💼 **لينكد إن:** [linkedin.com/in/mr-mohamed-saleh](https://linkedin.com/in/mr-mohamed-saleh)
+- 🌐 **المستودع الرسمي للمشروع (GitHub):** [Smart-Document-Converter](https://github.com/abosalehworld-oss/Smart-Document-Converter)

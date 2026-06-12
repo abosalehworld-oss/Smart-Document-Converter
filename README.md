@@ -52,5 +52,10 @@ Tesseract OCR • PyMuPDF • python-docx • PySide6 • OpenCV • pytesseract
 جميع المكتبات المستخدمة داخل المشروع هي أيضاً مفتوحة المصدر (Apache 2.0 / MIT / LGPL).
 
 ---
-> 💖 **صدقة جارية** - Mohamed Saleh
-> 📞 للتواصل: 01025794796
+> 💖 **صدقة جارية** - تم التطوير بواسطة **Mohamed Saleh**
+> 
+> **للتواصل مع المطور الأصلي (الدعم الفني أو الاستفسارات):**
+> - 📧 **البريد الإلكتروني:** abosalehworld@gmail.com
+> - 📞 **الهاتف:** 01025794796
+> - 💼 **لينكد إن:** [linkedin.com/in/mr-mohamed-saleh](https://linkedin.com/in/mr-mohamed-saleh)
+> - 🌐 **المستودع الرسمي للمشروع:** [GitHub Repository](https://github.com/abosalehworld-oss/Smart-Document-Converter)
