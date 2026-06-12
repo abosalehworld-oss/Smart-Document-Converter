@@ -44,7 +44,12 @@ echo Lib\site-packages >> "%PYDIR%\python313._pth"
 echo  [5/7] Copying Tesseract OCR Engine...
 if exist "C:\Program Files\Tesseract-OCR" (
     xcopy /E /I /Q /Y "C:\Program Files\Tesseract-OCR\*" "%TESSDIR%\" >nul
-    echo  [OK] Tesseract copied from Program Files
+    if exist "ara_best.traineddata" (
+        copy /Y "ara_best.traineddata" "%TESSDIR%\tessdata\ara.traineddata" >nul
+        echo  [OK] Tesseract copied from Program Files (With BEST Arabic Model!)
+    ) else (
+        echo  [OK] Tesseract copied from Program Files
+    )
 ) else (
     color 0C
     echo  [ERROR] Tesseract not found! Install it first.
