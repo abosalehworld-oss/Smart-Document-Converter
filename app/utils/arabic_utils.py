@@ -135,6 +135,9 @@ def normalize_arabic_text(text: str) -> str:
     lines = [line.strip() for line in lines]
     text = '\n'.join(lines)
     
+    # توحيد الأرقام المشرقية (٠١٢٣) إلى أرقام قياسية (0123) للحفاظ على تنسيق التواريخ والقوائم
+    text = convert_arabic_numerals(text)
+    
     return text.strip()
 
 
