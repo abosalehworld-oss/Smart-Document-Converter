@@ -17,13 +17,14 @@ dist/
 build/
 *.egg-info/
 *.egg
-*.spec
+# *.spec   <-- مسموح به عشان محتاجينه للبناء
 
-# OCR Models (large files - download locally)
-models/
-*.pth
-*.pt
-*.onnx
+# OCR Models (large binary files - download locally)
+models/*.pth
+models/*.pt
+models/*.onnx
+models/*.bin
+# models/README.txt  <-- مسموح به
 
 # IDE
 .vscode/
@@ -66,4 +67,3 @@ logs/
 
 # PyInstaller
 *.manifest
-*.spec
