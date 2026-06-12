@@ -19,18 +19,23 @@ mkdir "%OUTDIR%"
 mkdir "%PYDIR%"
 mkdir "%PYDIR%\Lib\site-packages"
 
-echo  [2/7] Downloading Python 3.13 Embeddable Package...
-powershell -Command "Invoke-WebRequest -Uri 'https://www.python.org/ftp/python/3.13.1/python-3.13.1-embed-amd64.zip' -OutFile 'python-embed.zip'"
-if errorlevel 1 (
-    color 0C
-    echo  [ERROR] Failed to download Python!
-    pause
-    exit /b 1
+echo  [2/7] Preparing Python 3.13 Embeddable Package...
+if not exist "python-embed.zip" (
+    echo  Downloading Python from internet...
+    powershell -Command "Invoke-WebRequest -Uri 'https://www.python.org/ftp/python/3.13.1/python-3.13.1-embed-amd64.zip' -OutFile 'python-embed.zip'"
+    if errorlevel 1 (
+        color 0C
+        echo  [ERROR] Failed to download Python!
+        pause
+        exit /b 1
+    )
+) else (
+    echo  [OK] Using existing python-embed.zip file!
 )
 
 echo  [3/7] Extracting Python...
 powershell -Command "Expand-Archive -Path 'python-embed.zip' -DestinationPath '%PYDIR%' -Force"
-del python-embed.zip
+REM del python-embed.zip (Removed to allow offline builds)
 
 echo  [4/7] Configuring Python (Enabling site-packages)...
 powershell -Command "(Get-Content '%PYDIR%\python313._pth') -replace '#import site', 'import site' | Set-Content '%PYDIR%\python313._pth'"
