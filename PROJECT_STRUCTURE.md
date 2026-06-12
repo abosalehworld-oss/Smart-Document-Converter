@@ -271,3 +271,20 @@ User drops images → security.validate_file_integrity() for each
                   → WordGenerator.save()
                   → TempFileManager.cleanup()
 ```
+
+---
+
+## 📦 Portable Build System / نظام بناء النسخة المحمولة
+
+The `build_portable.bat` script generates a 100% self-contained standalone folder (`dist/Portable_SmartDocConverter`) that can be executed on any offline machine without installation.
+
+**Build Workflow**:
+1. **Offline-First Python**: Checks for `python-embed.zip` locally. Downloads it only if missing, then caches it for future offline builds.
+2. **Tesseract Bundling**: Copies the full `Tesseract-OCR` engine and Arabic language packs from the developer's machine to the portable folder.
+3. **App Code & Assets**: Copies the `app/` directory, `main.py`, and custom icons.
+4. **VBScript Shortcut Gen**: Automatically generates an `.ico` file using PIL and runs a VBScript to create a Windows Shortcut (`Smart Document Converter.lnk`) with the custom golden logo, pointing to `Run_Program.bat`.
+
+**Execution Constraints (Pythonw Bug Fix)**:
+- Windows `pythonw.exe` lacks standard console handles (`stdin`), causing `pytesseract.get_languages()` to crash with `WinError 6`.
+- We bypass this bug in `ocr_engine.py` by manually scanning the `tessdata` directory instead of using `pytesseract`'s broken internal subprocess checks.
+- The taskbar icon is forced by combining `AppUserModelID` and explicit `setWindowIcon` on `MainWindow`.
