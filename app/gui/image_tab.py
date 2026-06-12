@@ -224,7 +224,7 @@ class ImageTab(QWidget):
         if not self.settings.get('preprocessing', True):
             mode = 'graphic'
         else:
-            mode = 'handwritten' if self.settings.get('handwriting_mode', False) else 'printed'
+            mode = 'handwritten' if self.settings.get('handwriting_mode', False) else 'photo'
         
         # إعداد الواجهة
         self._convert_btn.setEnabled(False)

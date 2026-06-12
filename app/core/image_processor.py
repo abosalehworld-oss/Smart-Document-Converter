@@ -80,15 +80,16 @@ class ImageProcessor:
             gray = self._gentle_denoise(gray, strength=5)
         elif mode == self.MODE_HANDWRITTEN:
             # الخط اليدوي يحتاج تباين عالي وتنظيف أقل
-            gray = self._enhance_contrast(gray, clip_limit=3.0)
-            gray = self._gentle_denoise(gray, strength=5)
+            gray = self._adaptive_binarize(gray, block_size=15)
+            gray = self._gentle_denoise(gray, strength=3)
         elif mode == self.MODE_GRAPHIC:
             # التصاميم الملونة والإعلانات: نتجنب الـ binarize لأنه يفسد التدرجات اللونية والعلامات المائية
             # نكتفي بتحسين التباين قليلاً وترك Tesseract يتعامل معها بذكائه الداخلي (Otsu)
             gray = self._enhance_contrast(gray, clip_limit=1.5)
         else:
-            # النصوص المطبوعة - معالجة قياسية (ترك Tesseract يتعامل مع التدرج الرمادي)
-            gray = self._enhance_contrast(gray, clip_limit=2.0)
+            # النصوص المطبوعة (PDFs العادية والمستندات الرسمية)
+            # نستخدم Adaptive Binarize لأنه ممتاز في تنظيف خلفية الورق وإبراز النص الأسود
+            gray = self._adaptive_binarize(gray, block_size=11)
             gray = self._gentle_denoise(gray, strength=5)
         
         return gray
