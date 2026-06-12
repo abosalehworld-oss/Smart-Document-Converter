@@ -46,7 +46,7 @@ if exist "C:\Program Files\Tesseract-OCR" (
     xcopy /E /I /Q /Y "C:\Program Files\Tesseract-OCR\*" "%TESSDIR%\" >nul
     if exist "ara_best.traineddata" (
         copy /Y "ara_best.traineddata" "%TESSDIR%\tessdata\ara.traineddata" >nul
-        echo  [OK] Tesseract copied from Program Files (With BEST Arabic Model!)
+        echo  [OK] Tesseract copied from Program Files - With BEST Arabic Model
     ) else (
         echo  [OK] Tesseract copied from Program Files
     )
