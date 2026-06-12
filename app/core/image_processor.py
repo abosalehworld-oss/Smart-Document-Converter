@@ -88,9 +88,12 @@ class ImageProcessor:
             gray = self._enhance_contrast(gray, clip_limit=1.5)
         else:
             # النصوص المطبوعة (PDFs العادية والمستندات الرسمية)
-            # نستخدم Adaptive Binarize لأنه ممتاز في تنظيف خلفية الورق وإبراز النص الأسود
-            gray = self._adaptive_binarize(gray, block_size=11)
-            gray = self._gentle_denoise(gray, strength=5)
+            # ملاحظة هامة: محرك Tesseract 5 يعمل بتقنية LSTM التي تتدرب على تدرجات الرمادي.
+            # التحويل الثنائي الخارجي (Binarization) يدمر الحواف الناعمة للحروف ويخرب دقة التعرف في الملفات عالية الدقة.
+            # سنقوم فقط بتحسين التباين قليلاً وترك المحرك يتعامل معها بذكائه.
+            gray = self._enhance_contrast(gray, clip_limit=1.5)
+            # تنظيف خفيف للشوائب
+            gray = self._gentle_denoise(gray, strength=3)
         
         return gray
     
