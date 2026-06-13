@@ -88,11 +88,18 @@ class ImageProcessor:
             gray = self._enhance_contrast(gray, clip_limit=1.5)
         else:
             # النصوص المطبوعة (PDFs العادية والمستندات الرسمية)
-            # ملاحظة هامة: محرك Tesseract 5 يعمل بتقنية LSTM التي تتدرب على تدرجات الرمادي.
-            # التكبير أمر حاسم جداً للـ LSTM لتجنب تكسر الحروف العربية المطبوعة
+            # التكبير أمر حاسم لتجنب تكسر الحروف العربية المطبوعة
             gray = self._upscale_if_needed(gray, min_height=2500)
             
-            gray = self._enhance_contrast(gray, clip_limit=1.5)
+            # زيادة التباين لضمان وضوح الحروف الباهتة
+            gray = self._enhance_contrast(gray, clip_limit=2.0)
+            
+            # تطبيق تقنية Morphological لزيادة سماكة الحروف المطبوعة (علاج مشكلة الحروف المقطعة)
+            # النواة 2x2 تساعد على لحام الحروف العربية الرقيقة جداً
+            # ملاحظة: لأن خلفية الورق بيضاء والنص أسود، نستخدم cv2.erode للون الأبيض مما يؤدي لتضخيم النص الأسود (Dilation للنص)
+            kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2, 2))
+            gray = cv2.erode(gray, kernel, iterations=1)
+            
             # تنظيف خفيف للشوائب
             gray = self._gentle_denoise(gray, strength=3)
         

@@ -241,9 +241,11 @@ class OCREngine:
                 pil_image = image
             
             # إعدادات Tesseract المحسنة للعربي مع دعم المسارات العربية لملفات tessdata
-            # تم تعديل psm إلى 6 بدلاً من 3 لمنع تداخل الأرقام والتواريخ العشوائي (هلوسة المحرك)
+            # تم تعديل psm إلى 6 لمنع تداخل الأرقام والتواريخ العشوائي
+            # تم إضافة --dpi 300 لضمان دقة التعرف، وتخطي عكس الألوان (invert=0) لمنع تشوه الأرقام
             tessdata_dir = getattr(self, '_tessdata_prefix', '').replace('\\', '/')
-            custom_config = f'--tessdata-dir "{tessdata_dir}" --oem 3 --psm 6' if tessdata_dir else r'--oem 3 --psm 6'
+            base_config = r'--dpi 300 --oem 3 --psm 6 -c tessedit_do_invert=0'
+            custom_config = f'--tessdata-dir "{tessdata_dir}" {base_config}' if tessdata_dir else base_config
             
             if detail == 0:
                 # نص فقط - أبسط وأسرع
@@ -275,6 +277,8 @@ class OCREngine:
             
             for i in range(n_boxes):
                 text = data['text'][i].strip()
+                # تنظيف الأرقام والحروف المتداخلة
+                text = self._post_process_arabic_text(text)
                 conf = int(data['conf'][i])
                 line_num = data['line_num'][i]
                 block_num = data['block_num'][i]
@@ -341,9 +345,10 @@ class OCREngine:
                 pil_image = image
             
             # إعدادات Tesseract المحسنة للعربي مع دعم المسارات العربية لملفات tessdata
-            # تم تعديل psm إلى 6 لمنع تداخل التواريخ وتكسر الأرقام
+            # تم تعديل psm إلى 6 لمنع تداخل التواريخ وتكسر الأرقام، وإضافة dpi=300
             tessdata_dir = getattr(self, '_tessdata_prefix', '').replace('\\', '/')
-            custom_config = f'--tessdata-dir "{tessdata_dir}" --oem 3 --psm 6' if tessdata_dir else r'--oem 3 --psm 6'
+            base_config = r'--dpi 300 --oem 3 --psm 6 -c tessedit_do_invert=0'
+            custom_config = f'--tessdata-dir "{tessdata_dir}" {base_config}' if tessdata_dir else base_config
             
             text = pytesseract.image_to_string(
                 pil_image,
@@ -354,6 +359,10 @@ class OCREngine:
             
             # تنظيف النص مع الحفاظ على الفقرات
             import re
+            
+            # تنظيف الحروف والأرقام العربية
+            text = self._post_process_arabic_text(text)
+            
             # إزالة المسافات من أطراف كل سطر
             lines = text.split('\n')
             cleaned_lines = [line.strip() for line in lines]
@@ -391,6 +400,39 @@ class OCREngine:
             return sorted(results, key=sort_key)
         except Exception:
             return results
+            
+    def _post_process_arabic_text(self, text: str) -> str:
+        """
+        تنظيف ومعالجة النص العربي لإصلاح أخطاء Tesseract الشائعة في الأرقام والحروف.
+        """
+        if not text:
+            return text
+            
+        import re
+        
+        # 1. إصلاح التباعد العشوائي بين الحروف
+        text = re.sub(r' +', ' ', text)
+        
+        # 2. إصلاح الخلط الشائع للأرقام الهندية (العربية) مع الحروف
+        # رموز غريبة يهذي بها Tesseract للأرقام
+        text = text.replace('©', '٥')
+        text = text.replace('¥', '٢')
+        
+        # إذا جاء حرف 'ا' (ألف) بجوار أرقام فهو بنسبة كبيرة رقم '١'
+        text = re.sub(r'(?<=[٠-٩])ا', '١', text)
+        text = re.sub(r'ا(?=[٠-٩])', '١', text)
+        
+        # إذا جاء حرف 'ه' أو 'هـ' بجوار أرقام فهو رقم '٥'
+        text = re.sub(r'(?<=[٠-٩])ه(?=[٠-٩]|\s)', '٥', text)
+        text = re.sub(r'(?<=[٠-٩])هـ(?=[٠-٩]|\s)', '٥', text)
+        
+        # حرف 'ع' وسط الأرقام قد يكون '٤'
+        text = re.sub(r'(?<=[٠-٩])ع(?=[٠-٩]|\s)', '٤', text)
+        
+        # الخلط بين الصفر الإنجليزي '0' والنقطة أو حرف 'o' أو 'O' وسط الأرقام العربية
+        text = re.sub(r'(?<=[0-9])o(?=[0-9]|\s)', '0', text, flags=re.IGNORECASE)
+        
+        return text
     
     def change_languages(self, languages: list):
         """تغيير اللغات وإعادة تحميل المحرك."""
