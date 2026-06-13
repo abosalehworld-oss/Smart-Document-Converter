@@ -277,7 +277,8 @@ User drops images → security.validate_file_integrity() for each
 
 ## 📦 Portable Build System / نظام بناء النسخة المحمولة
 
-The `build_portable.bat` script generates a 100% self-contained standalone folder (`dist/Portable_SmartDocConverter`) that can be executed on any offline machine without installation.
+The `build_portable.bat` script generates a 100% self-contained standalone folder (`dist/Portable_SmartDocConverter`) that can be executed on any offline machine without installation. 
+**Crucially, this means the target machine does NOT need Python installed, does NOT need Tesseract installed, and does NOT need an internet connection.**
 
 **Build Workflow**:
 1. **Offline-First Python**: Checks for `python-embed.zip` locally. Downloads it only if missing, then caches it for future offline builds.
