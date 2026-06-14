@@ -487,9 +487,15 @@ class OCREngine:
             return
         except Exception as e:
             import logging
+            import traceback
             logger = logging.getLogger(__name__)
-            logger.warning(f"لم يتم تشغيل محرك الويندوز (سيتم استخدام Tesseract بدلاً منه): {e}")
-            
+            error_msg = f"لم يتم تشغيل محرك الويندوز (سيتم استخدام Tesseract بدلاً منه): {e}\n{traceback.format_exc()}"
+            logger.warning(error_msg)
+            try:
+                with open("debug_ocr.txt", "a", encoding="utf-8") as f:
+                    f.write(error_msg + "\n")
+            except:
+                pass
         # إذا فشل الويندوز، استخدم Tesseract
         if progress_callback:
             progress_callback("جاري تحميل محرك Tesseract كبديل...")
