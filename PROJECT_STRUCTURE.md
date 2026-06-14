@@ -138,7 +138,7 @@ where internet access is unavailable and data security is paramount.
 │   ├── core/                        # ⚙️ Business logic (no UI dependencies)
 │   │   ├── __init__.py
 │   │   ├── ocr_engine.py           # Dual Engine Router (Windows OCR + Tesseract)
-│   │   ├── windows_ocr.py          # Native Windows 10/11 OCR integration via WinRT
+│   │   ├── windows_ocr.py          # Native WinRT OCR (Blazing fast, no extra space, native visual RTL support)
 │   │   ├── image_processor.py      # OpenCV image enhancement
 │   │   ├── pdf_processor.py        # PyMuPDF PDF handling
 │   │   └── word_generator.py       # python-docx Word creation
