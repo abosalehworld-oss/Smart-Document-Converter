@@ -200,12 +200,12 @@ class MainWindow(QMainWindow):
         self._dev_charity.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self._dev_charity.setWordWrap(True)
         
-        dev_name = QLabel("محمد صالح | محمد صبحي")
-        dev_name.setStyleSheet(f"color: {COLORS['primary']}; font-size: 13px; font-weight: bold; border: none; background: transparent;")
+        dev_name = QLabel("محمد صالح: 01025794796 📞")
+        dev_name.setStyleSheet(f"color: {COLORS['primary']}; font-size: 12px; font-weight: bold; border: none; background: transparent;")
         dev_name.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
-        dev_phone = QLabel("📞 01025794796 | 📞 01274931203")
-        dev_phone.setStyleSheet(f"color: {COLORS['accent']}; font-size: 11px; font-weight: bold; border: none; background: transparent;")
+        dev_phone = QLabel("محمد صبحي: 01274931203 📞")
+        dev_phone.setStyleSheet(f"color: {COLORS['accent']}; font-size: 12px; font-weight: bold; border: none; background: transparent;")
         dev_phone.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
         dev_email = QLabel("📧 abosalehworld@gmail.com")
