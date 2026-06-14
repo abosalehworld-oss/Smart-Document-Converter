@@ -70,12 +70,13 @@ where internet access is unavailable and data security is paramount.
 │  ┌──────────────────┐  ┌──────────────────────────────────┐     │
 │  │  ocr_engine.py   │  │     image_processor.py           │     │
 │  │                  │  │                                  │     │
-│  │  - Tesseract wrap  │  │  - LSTM-friendly Grayscale      │     │
-│  │  - Force ara+eng   │  │  - CLAHE contrast enhancement   │     │
-│  │  - Text sorting  │  │  - Gentle denoising (Arabic!)   │     │
-│  │  - Portable tess │  │  - Shadow removal (phone pics)  │     │
-│  │  - Win Monkey Ptc│  │  - Upscaling 2000px for clarity │     │
-│  └──────────────────┘  │  - Deskewing                    │     │
+│  │  - Router Engine │  │  - LSTM-friendly Grayscale      │     │
+│  │  - Windows OCR   │  │  - CLAHE contrast enhancement   │     │
+│  │    (Primary)     │  │  - Gentle denoising (Arabic!)   │     │
+│  │  - Tesseract OCR │  │  - Shadow removal (phone pics)  │     │
+│  │    (Fallback)    │  │  - Upscaling 2000px for clarity │     │
+│  │  - RTL Sorting   │  │  - Deskewing                    │     │
+│  └──────────────────┘  └──────────────────────────────────┘     │
 │                        └──────────────────────────────────┘     │
 │  ┌──────────────────┐  ┌──────────────────────────────────┐     │
 │  │ pdf_processor.py │  │     word_generator.py            │     │
@@ -129,7 +130,8 @@ where internet access is unavailable and data security is paramount.
 │   │
 │   ├── core/                        # ⚙️ Business logic (no UI dependencies)
 │   │   ├── __init__.py
-│   │   ├── ocr_engine.py           # Tesseract wrapper (CPU, offline)
+│   │   ├── ocr_engine.py           # Dual Engine Router (Windows OCR + Tesseract)
+│   │   ├── windows_ocr.py          # Native Windows 10/11 OCR integration via WinRT
 │   │   ├── image_processor.py      # OpenCV image enhancement
 │   │   ├── pdf_processor.py        # PyMuPDF PDF handling
 │   │   └── word_generator.py       # python-docx Word creation
@@ -200,8 +202,10 @@ main.py
 
 | Component | Library | Version | License | Purpose |
 |-----------|---------|---------|---------|---------|
-| OCR Engine | Tesseract | 5.x | Apache 2.0 | Text recognition (Arabic+English) |
-| Deep Learning | pytesseract | 0.3.13 | GPL | Python wrapper for Tesseract |
+| Primary OCR | WinRT OCR | OS Native | Proprietary | High-speed, high-accuracy Arabic text recognition |
+| Fallback OCR | Tesseract | 5.x | Apache 2.0 | Backup text recognition (Windows 7/8 support) |
+| OCR Wrapper | pytesseract | 0.3.13 | GPL | Python wrapper for Tesseract |
+| WinRT Bindings| winrt-Windows.*| 3.2.1 | MIT | Python access to Windows OS features |
 | PDF Reading | PyMuPDF | 1.25.5 | AGPL | PDF → image conversion |
 | Word Writing | python-docx | 1.1.2 | MIT | .docx file creation |
 | Image Processing | OpenCV | 4.10.0 | Apache 2.0 | Image enhancement for OCR |

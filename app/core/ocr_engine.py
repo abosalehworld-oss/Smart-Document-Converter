@@ -14,7 +14,7 @@ from PIL import Image
 logger = logging.getLogger(__name__)
 
 
-class OCREngine:
+class TesseractOCREngine:
     """
     محرك OCR الرئيسي - يستخدم Tesseract.
     يعمل أوفلاين بالكامل، أسرع وأدق للعربي.
@@ -444,4 +444,80 @@ class OCREngine:
     
     def get_supported_languages(self) -> list:
         """إرجاع قائمة اللغات المدعومة."""
+        return ['ar', 'en']
+
+
+from app.core.windows_ocr import WindowsOCREngine
+
+class OCREngine:
+    """
+    محرك التوجيه (Router Engine)
+    يحاول استخدام محرك الويندوز أولاً لسرعته ودقته الفائقة، 
+    وإذا لم يتوفر يعود إلى Tesseract.
+    """
+    
+    def __init__(
+        self,
+        languages: list = None,
+        gpu: bool = False,
+        model_dir: str = None
+    ):
+        self.languages = languages or ['ar', 'en']
+        self._is_loaded = False
+        self._active_engine = None
+        
+        # تهيئة المحركات
+        self._windows_engine = WindowsOCREngine(languages)
+        self._tesseract_engine = TesseractOCREngine(languages, gpu, model_dir)
+        
+    def load(self, progress_callback=None):
+        if self._is_loaded:
+            return
+            
+        # محاولة تحميل Windows OCR أولاً
+        try:
+            if progress_callback:
+                progress_callback("جاري فحص محرك الويندوز الذكي...")
+            self._windows_engine.load(progress_callback)
+            self._active_engine = self._windows_engine
+            self._is_loaded = True
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.info("تم تفعيل محرك الويندوز بنجاح كخيار أساسي.")
+            return
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning(f"لم يتم تشغيل محرك الويندوز (سيتم استخدام Tesseract بدلاً منه): {e}")
+            
+        # إذا فشل الويندوز، استخدم Tesseract
+        if progress_callback:
+            progress_callback("جاري تحميل محرك Tesseract كبديل...")
+        
+        self._tesseract_engine.load(progress_callback)
+        self._active_engine = self._tesseract_engine
+        self._is_loaded = True
+        
+    @property
+    def is_loaded(self) -> bool:
+        return self._is_loaded
+        
+    def extract_text(self, image, detail: int = 1, paragraph: bool = True) -> list:
+        if not self._is_loaded:
+            self.load()
+        return self._active_engine.extract_text(image, detail, paragraph)
+
+    def extract_text_simple(self, image) -> str:
+        if not self._is_loaded:
+            self.load()
+        return self._active_engine.extract_text_simple(image)
+        
+    def change_languages(self, languages: list):
+        self.languages = languages
+        self._is_loaded = False
+        self._windows_engine.change_languages(languages)
+        self._tesseract_engine.change_languages(languages)
+        self.load()
+        
+    def get_supported_languages(self) -> list:
         return ['ar', 'en']

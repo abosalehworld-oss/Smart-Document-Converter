@@ -43,7 +43,7 @@ build_portable.bat
 
 ## 🛠️ التقنيات
 
-Tesseract OCR • PyMuPDF • python-docx • PySide6 • OpenCV • pytesseract
+Windows OCR (WinRT) • Tesseract OCR • PyMuPDF • python-docx • PySide6 • OpenCV
 
 ## 📄 الترخيص (License)
 
