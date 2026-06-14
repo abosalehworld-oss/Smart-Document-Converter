@@ -55,7 +55,7 @@ class WindowsOCREngine:
             self._is_loaded = True
             if progress_callback:
                 progress_callback(f"تم تحميل محرك ويندوز للغة: {lang.display_name}")
-            logger.info(f"Windows OCR Engine loaded for {lang_tag}.")
+            logger.info(f"Windows OCR Engine loaded for {lang.language_tag}.")
         except ImportError as e:
             raise RuntimeError("مكتبة winsdk/winrt غير مثبتة.") from e
         except Exception as e:
