@@ -229,9 +229,8 @@ class SnippetWorker(QThread):
     def run(self):
         try:
             # معالجة الصورة باستخدام معالج الصور (Upscaling + Contrast + Denoising)
-            # هذه الخطوة حاسمة جداً لأن لقطة الشاشة (Snipping) تكون دقتها منخفضة (96 DPI)
-            # وحجم الخط فيها صغير جداً على محركات OCR مما يسبب أخطاء في التعرف.
-            processed = self.image_processor.enhance_for_ocr(self.image_np, self.mode)
+            # نستخدم وضع SNIPPET لأنه يكبر اللقطة بدون Erode (لأن لقطة الشاشة ديجيتال ونقية)
+            processed = self.image_processor.enhance_for_ocr(self.image_np, mode='snippet')
             
             text = self.ocr_engine.extract_text_simple(processed)
             if not text or not text.strip():

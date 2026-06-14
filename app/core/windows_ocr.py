@@ -25,7 +25,7 @@ class WindowsOCREngine:
             from winrt.windows.media.ocr import OcrEngine
             from winrt.windows.globalization import Language
             
-            available_langs = OcrEngine.get_available_recognizer_languages()
+            available_langs = OcrEngine.available_recognizer_languages
             
             lang = None
             if 'ar' in self.languages:

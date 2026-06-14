@@ -24,6 +24,7 @@ class ImageProcessor:
     MODE_HANDWRITTEN = 'handwritten'  # خط يدوي
     MODE_PHOTO = 'photo'          # صور موبايل
     MODE_GRAPHIC = 'graphic'      # تصاميم وصور ملونة
+    MODE_SNIPPET = 'snippet'      # لقطات الشاشة (تحتاج تكبير فقط بدون Erode)
     
     def __init__(self, target_dpi: int = 300):
         self.target_dpi = target_dpi
@@ -86,6 +87,11 @@ class ImageProcessor:
             # التصاميم الملونة والإعلانات: نتجنب الـ binarize لأنه يفسد التدرجات اللونية والعلامات المائية
             # نكتفي بتحسين التباين قليلاً وترك Tesseract يتعامل معها بذكائه الداخلي (Otsu)
             gray = self._enhance_contrast(gray, clip_limit=1.5)
+        elif mode == self.MODE_SNIPPET:
+            # لقطات الشاشة تكون ديجيتال ونقية، تحتاج فقط إلى تكبير وتباين بدون Erode
+            gray = self._upscale_if_needed(gray, min_height=2500)
+            gray = self._enhance_contrast(gray, clip_limit=1.5)
+            gray = self._gentle_denoise(gray, strength=3)
         else:
             # النصوص المطبوعة (PDFs العادية والمستندات الرسمية)
             # التكبير أمر حاسم لتجنب تكسر الحروف العربية المطبوعة
