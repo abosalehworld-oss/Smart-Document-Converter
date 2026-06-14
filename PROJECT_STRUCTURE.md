@@ -79,8 +79,8 @@ where internet access is unavailable and data security is paramount.
 │  │  - Windows OCR   │  │  - CLAHE contrast enhancement   │     │
 │  │    (Primary)     │  │  - Gentle denoising (Arabic!)   │     │
 │  │  - Tesseract OCR │  │  - Shadow removal (phone pics)  │     │
-│  │    (Fallback)    │  │  - Upscaling 2000px for clarity │     │
-│  │  - RTL Sorting   │  │  - Deskewing                    │     │
+│  │    (Fallback)    │  │  - Upscaling 2500px for clarity │     │
+│  │  - RTL Sorting   │  │  - Low-DPI Snippet Upscaling    │     │
 │  └──────────────────┘  └──────────────────────────────────┘     │
 │                        └──────────────────────────────────┘     │
 │  ┌──────────────────┐  ┌──────────────────────────────────┐     │
