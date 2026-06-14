@@ -49,13 +49,18 @@ where internet access is unavailable and data security is paramount.
 │         │                            │  - ImageConversionWkr│   │
 │         ▼                            └──────────────────────┘   │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐   │
-│  │  pdf_tab.py  │  │ image_tab.py │  │  settings_tab.py     │   │
+│  │  pdf_tab.py  │  │ image_tab.py │  │  snipping_tab.py     │   │
 │  │              │  │              │  │                      │   │
-│  │ - Select PDF │  │ - Drag&Drop  │  │  - Language          │   │
-│  │ - Page range │  │ - Browse img │  │  - OCR languages     │   │
-│  │ - Convert    │  │ - Browse dir │  │  - Font settings     │   │
-│  │ - Save as    │  │ - Convert    │  │  - Quality           │   │
+│  │ - Select PDF │  │ - Drag&Drop  │  │ - snippet_overlay.py │   │
+│  │ - Page range │  │ - Browse img │  │ - SnippetWorker      │   │
+│  │ - Convert    │  │ - Browse dir │  │ - In-Memory Capture  │   │
+│  │ - Save as    │  │ - Convert    │  │ - Instant Output     │   │
 │  └──────────────┘  └──────────────┘  └──────────────────────┘   │
+│                                                                  │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │  settings_tab.py                                         │   │
+│  │  - Language | OCR languages | Font settings | Quality    │   │
+│  └──────────────────────────────────────────────────────────┘   │
 │                                                                  │
 │  ┌──────────────────────────────────────────────────────────┐   │
 │  │                    widgets.py                             │   │
@@ -141,9 +146,11 @@ where internet access is unavailable and data security is paramount.
 │   │   ├── main_window.py          # Main window + sidebar navigation
 │   │   ├── pdf_tab.py              # PDF → Word conversion tab
 │   │   ├── image_tab.py            # Images → Word conversion tab
+│   │   ├── snipping_tab.py         # ✂️ In-app custom snipping tool tab
+│   │   ├── snippet_overlay.py      # Frameless transparent screen capture overlay
 │   │   ├── settings_tab.py         # Settings + language switcher
 │   │   ├── widgets.py              # Reusable widgets (DragDrop, Progress)
-│   │   ├── workers.py              # QThread background workers
+│   │   ├── workers.py              # QThread background workers (includes SnippetWorker)
 │   │   └── styles.py               # Dark theme QSS stylesheet
 │   │
 │   ├── utils/                       # 🔧 Utility modules
@@ -275,6 +282,19 @@ User drops images → security.validate_file_integrity() for each
                   → WordGenerator.add_page_text()
                   → WordGenerator.save()
                   → TempFileManager.cleanup()
+```
+
+### Snipping Tool Flow:
+```
+User clicks "Take Snip" → App Hides
+                        → SnippetOverlay (Frameless) draws on Desktop
+                        → User drags mouse to select text
+                        → Emits cropped QImage in-memory
+                        → App Restores
+                        → SnippetWorker converts QImage to Numpy Array
+                        → ImageProcessor.enhance_for_ocr()
+                        → OCREngine.extract_text_simple()
+                        → Outputs raw text directly to UI (No file saved)
 ```
 
 ---
