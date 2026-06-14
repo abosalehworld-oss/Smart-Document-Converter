@@ -9,7 +9,7 @@ import numpy as np
 import cv2
 
 from app.gui.styles import COLORS
-from app.utils.arabic_utils import tr, reshape_for_display
+from app.utils.arabic_utils import tr
 from app.core.ocr_engine import OCREngine
 from app.core.image_processor import ImageProcessor
 from app.gui.snippet_overlay import SnippetOverlay
@@ -39,11 +39,11 @@ class SnippingTab(QWidget):
         header_layout = QVBoxLayout()
         header_layout.setSpacing(10)
         
-        self._title_label = QLabel(reshape_for_display(tr('tab_snipping', self._current_lang)))
+        self._title_label = QLabel(tr('tab_snipping', self._current_lang))
         self._title_label.setStyleSheet(f"color: {COLORS['text_primary']}; font-size: 24px; font-weight: bold;")
         header_layout.addWidget(self._title_label)
         
-        self._desc_label = QLabel(reshape_for_display(tr('snip_desc', self._current_lang)))
+        self._desc_label = QLabel(tr('snip_desc', self._current_lang))
         self._desc_label.setStyleSheet(f"color: {COLORS['text_secondary']}; font-size: 14px;")
         self._desc_label.setWordWrap(True)
         header_layout.addWidget(self._desc_label)
@@ -51,7 +51,7 @@ class SnippingTab(QWidget):
         layout.addLayout(header_layout)
         
         # زر التقاط الشاشة
-        self._btn_snip = QPushButton(reshape_for_display(tr('take_snip', self._current_lang)))
+        self._btn_snip = QPushButton(tr('take_snip', self._current_lang))
         self._btn_snip.setCursor(Qt.CursorShape.PointingHandCursor)
         self._btn_snip.setFixedHeight(60)
         self._btn_snip.setStyleSheet(f"""
@@ -92,7 +92,7 @@ class SnippingTab(QWidget):
         # أزرار أسفل المربع
         bottom_layout = QHBoxLayout()
         
-        self._btn_copy = QPushButton("📋 " + reshape_for_display(tr('copy_text', self._current_lang)))
+        self._btn_copy = QPushButton("📋 " + tr('copy_text', self._current_lang))
         self._btn_copy.setCursor(Qt.CursorShape.PointingHandCursor)
         self._btn_copy.setFixedSize(200, 45)
         self._btn_copy.setStyleSheet(f"""
@@ -116,10 +116,10 @@ class SnippingTab(QWidget):
         
     def update_language(self, lang: str):
         self._current_lang = lang
-        self._title_label.setText(reshape_for_display(tr('tab_snipping', lang)))
-        self._desc_label.setText(reshape_for_display(tr('snip_desc', lang)))
-        self._btn_snip.setText(reshape_for_display(tr('take_snip', lang)))
-        self._btn_copy.setText("📋 " + reshape_for_display(tr('copy_text', lang)))
+        self._title_label.setText(tr('tab_snipping', lang))
+        self._desc_label.setText(tr('snip_desc', lang))
+        self._btn_snip.setText(tr('take_snip', lang))
+        self._btn_copy.setText("📋 " + tr('copy_text', lang))
         self._text_edit.setLayoutDirection(Qt.LayoutDirection.RightToLeft if lang == 'ar' else Qt.LayoutDirection.LeftToRight)
         
     def _start_snipping(self):
@@ -145,7 +145,7 @@ class SnippingTab(QWidget):
         
         # مسح النص القديم وعرض رسالة تحميل
         self._text_edit.clear()
-        self._text_edit.setText("⏳ " + reshape_for_display(tr('converting', self._current_lang)))
+        self._text_edit.setText("⏳ " + tr('converting', self._current_lang))
         self._btn_snip.setEnabled(False)
         
         # تحويل QImage إلى Numpy Array
@@ -177,5 +177,5 @@ class SnippingTab(QWidget):
             
             # تغيير النص لفترة قصيرة كدليل مرئي
             original_text = self._btn_copy.text()
-            self._btn_copy.setText("✅ " + reshape_for_display(tr('text_copied', self._current_lang)))
+            self._btn_copy.setText("✅ " + tr('text_copied', self._current_lang))
             QTimer.singleShot(2000, lambda: self._btn_copy.setText(original_text))
