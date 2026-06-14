@@ -78,11 +78,13 @@ where internet access is unavailable and data security is paramount.
 │  │  - Router Engine │  │  - LSTM-friendly Grayscale      │     │
 │  │  - Windows OCR   │  │  - CLAHE contrast enhancement   │     │
 │  │    (Primary)     │  │  - Gentle denoising (Arabic!)   │     │
-│  │  - Tesseract OCR │  │  - Shadow removal (phone pics)  │     │
-│  │    (Fallback)    │  │  - Upscaling 2500px for clarity │     │
-│  │  - RTL Sorting   │  │  - Low-DPI Snippet Upscaling    │     │
-│  └──────────────────┘  └──────────────────────────────────┘     │
-│                        └──────────────────────────────────┘     │
+│  │    * Dynamic tag │  │  - Shadow removal (phone pics)  │     │
+│  │      matching    │  │  - Upscaling 2500px for clarity │     │
+│  │      (ar-EG, etc)│  │  - Low-DPI Snippet Upscaling    │     │
+│  │  - Tesseract OCR │  └──────────────────────────────────┘     │
+│  │    (Fallback)    │                                           │
+│  │  - RTL Sorting   │                                           │
+│  └──────────────────┘                                           │
 │  ┌──────────────────┐  ┌──────────────────────────────────┐     │
 │  │ pdf_processor.py │  │     word_generator.py            │     │
 │  │                  │  │                                  │     │
