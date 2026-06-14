@@ -228,17 +228,10 @@ class SnippetWorker(QThread):
         
     def run(self):
         try:
-            # معالجة الصورة باستخدام numpy array مباشرة (بدلاً من المسار)
-            # بما أن الصورة تأتي من الشاشة، فهي عادة واضحة، لكن يمكن تمريرها لمعالج الصور
-            # ImageProcessor.load_and_preprocess usually takes a path. We might need to bypass it or use a temp file.
-            # However, for screen snippets, the quality is usually native. Let's just pass it to OCR.
-            # But let's apply simple preprocessing if needed. 
-            import cv2
-            import numpy as np
-            
-            processed = self.image_np
-            # إذا كانت BGR نحولها إلى رمادي لزيادة التباين قليلاً (اختياري)
-            # processed = cv2.cvtColor(self.image_np, cv2.COLOR_BGR2GRAY)
+            # معالجة الصورة باستخدام معالج الصور (Upscaling + Contrast + Denoising)
+            # هذه الخطوة حاسمة جداً لأن لقطة الشاشة (Snipping) تكون دقتها منخفضة (96 DPI)
+            # وحجم الخط فيها صغير جداً على محركات OCR مما يسبب أخطاء في التعرف.
+            processed = self.image_processor.enhance_for_ocr(self.image_np, self.mode)
             
             text = self.ocr_engine.extract_text_simple(processed)
             if not text or not text.strip():
