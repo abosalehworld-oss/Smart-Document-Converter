@@ -9,7 +9,7 @@ set TESSDIR=%OUTDIR%\tesseract
 
 echo.
 echo  ============================================================
-echo   Building Portable Standalone Package (v2.0 - Tesseract)
+echo   Building Portable Standalone Package (v2.0 - Dual Engine)
 echo  ============================================================
 echo.
 
