@@ -6,6 +6,14 @@ from PIL import Image
 
 logger = logging.getLogger(__name__)
 
+def is_arabic(text: str) -> bool:
+    """تحقق مما إذا كان النص يحتوي على حروف عربية أو أرقام عربية-شرقية."""
+    for char in text:
+        cp = ord(char)
+        if (0x0600 <= cp <= 0x06FF) or (0x0750 <= cp <= 0x077F) or (0x08A0 <= cp <= 0x08FF) or (0xFB50 <= cp <= 0xFDFF) or (0xFE70 <= cp <= 0xFEFF):
+            return True
+    return False
+
 class WindowsOCREngine:
     """
     محرك OCR يعتمد على Windows Media OCR (WinRT).
@@ -116,13 +124,20 @@ class WindowsOCREngine:
             result = asyncio.run(self._recognize_async(pil_image))
             
             # Reconstruct text fixing RTL order
-            # Windows OCR often returns words in visual LTR order
-            # For Arabic, we reverse the words array to get logical RTL order
+            # Windows OCR returns words in visual LTR order (left-to-right).
+            # For lines containing Arabic, we sort words by their bounding box X-coordinate in descending order.
             lines = []
             for line in result.lines:
-                words = [w.text for w in line.words]
-                # WinRT OCR returns words in visual reading order correctly for Arabic.
-                # Do NOT reverse them, just join them normally.
+                line_words = list(line.words)
+                if line_words:
+                    combined_text = "".join(w.text for w in line_words)
+                    if is_arabic(combined_text):
+                        try:
+                            line_words = sorted(line_words, key=lambda w: w.bounding_rect.x, reverse=True)
+                        except Exception as e:
+                            logger.warning(f"Failed to sort words by bounding_rect: {e}")
+                            line_words = line_words[::-1]
+                words = [w.text for w in line_words]
                 lines.append(" ".join(words))
                 
             return "\n".join(lines)
@@ -147,8 +162,17 @@ class WindowsOCREngine:
             result = asyncio.run(self._recognize_async(pil_image))
             
             for line in result.lines:
-                words = [w.text for w in line.words]
-                # WinRT OCR returns words in visual reading order. No need to reverse.
+                line_words = list(line.words)
+                if line_words:
+                    combined_text = "".join(w.text for w in line_words)
+                    if is_arabic(combined_text):
+                        try:
+                            line_words = sorted(line_words, key=lambda w: w.bounding_rect.x, reverse=True)
+                        except Exception as e:
+                            logger.warning(f"Failed to sort words by bounding_rect: {e}")
+                            line_words = line_words[::-1]
+                
+                words = [w.text for w in line_words]
                 text = " ".join(words)
                 
                 # Get bounding box if available

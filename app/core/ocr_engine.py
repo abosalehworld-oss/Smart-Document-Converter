@@ -465,6 +465,7 @@ class OCREngine:
         self.languages = languages or ['ar', 'en']
         self._is_loaded = False
         self._active_engine = None
+        self.gpu = False
         
         # تهيئة المحركات
         self._windows_engine = WindowsOCREngine(languages)

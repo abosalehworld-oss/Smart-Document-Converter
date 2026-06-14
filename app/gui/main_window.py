@@ -419,9 +419,14 @@ class MainWindow(QMainWindow):
         new_langs = settings.get('ocr_languages', ['ar', 'en'])
         if set(new_langs) != set(self.ocr_engine.languages):
             self.ocr_engine.languages = new_langs
-            # إعادة تحميل OCR سيتم عند الاستخدام التالي
             self.ocr_engine._is_loaded = False
-            self.ocr_engine._reader = None
+            
+            # تحديث المحركات الفرعية وإجبارها على إعادة التحميل
+            self.ocr_engine._windows_engine.languages = new_langs
+            self.ocr_engine._windows_engine._is_loaded = False
+            self.ocr_engine._tesseract_engine.languages = new_langs
+            self.ocr_engine._tesseract_engine._is_loaded = False
+            
             self._load_ocr_engine()
     
     def _load_ocr_engine(self):
