@@ -121,8 +121,9 @@ class WindowsOCREngine:
             lines = []
             for line in result.lines:
                 words = [w.text for w in line.words]
-                # Reverse words to match Arabic reading direction
-                lines.append(" ".join(words[::-1]))
+                # WinRT OCR returns words in visual reading order correctly for Arabic.
+                # Do NOT reverse them, just join them normally.
+                lines.append(" ".join(words))
                 
             return "\n".join(lines)
         except Exception as e:
@@ -147,8 +148,8 @@ class WindowsOCREngine:
             
             for line in result.lines:
                 words = [w.text for w in line.words]
-                # Reverse words for Arabic RTL
-                text = " ".join(words[::-1])
+                # WinRT OCR returns words in visual reading order. No need to reverse.
+                text = " ".join(words)
                 
                 # Get bounding box if available
                 bbox = [[0, 0], [0, 0], [0, 0], [0, 0]]
