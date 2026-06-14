@@ -25,11 +25,28 @@ class WindowsOCREngine:
             from winrt.windows.media.ocr import OcrEngine
             from winrt.windows.globalization import Language
             
-            lang_tag = 'ar-SA' if 'ar' in self.languages else 'en-US'
-            lang = Language(lang_tag)
+            available_langs = OcrEngine.get_available_recognizer_languages()
             
-            if not OcrEngine.is_language_supported(lang):
-                raise RuntimeError(f"اللغة {lang_tag} غير مدعومة في نظام ويندوز الحالي. يرجى تثبيت حزمة اللغة.")
+            lang = None
+            if 'ar' in self.languages:
+                # Find any available Arabic language pack (ar-SA, ar-EG, ar-AE, etc.)
+                for l in available_langs:
+                    if l.language_tag.startswith('ar'):
+                        lang = l
+                        break
+            
+            if not lang and 'en' in self.languages:
+                for l in available_langs:
+                    if l.language_tag.startswith('en'):
+                        lang = l
+                        break
+                        
+            if not lang:
+                # Fallback to creating Language object to trigger native error if missing
+                lang_tag = 'ar-SA' if 'ar' in self.languages else 'en-US'
+                lang = Language(lang_tag)
+                if not OcrEngine.is_language_supported(lang):
+                    raise RuntimeError(f"اللغة {lang_tag} غير مدعومة في نظام ويندوز الحالي. يرجى تثبيت حزمة اللغة.")
                 
             self._engine = OcrEngine.try_create_from_language(lang)
             if not self._engine:
