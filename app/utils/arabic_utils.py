@@ -250,6 +250,14 @@ TRANSLATIONS = {
         'dev_by': 'تم التطوير بواسطة:',
         'dev_charity': 'تم تطوير هذا العمل لوجه الله تعالى\nبشكل مجاني للعمل أوفلاين بدون إنترنت',
         'dev_rights': '© حقوق الملكية محفوظة 2026',
+        
+        # أداة اللقطات
+        'tab_snipping': 'لقطة سريعة',
+        'take_snip': 'التقاط نص من الشاشة ✂️',
+        'snip_desc': 'اضغط على الزر، حدد النص بالماوس، وسيتم استخراجه فوراً!',
+        'copy_text': 'نسخ النص',
+        'text_copied': 'تم نسخ النص!',
+        'no_text_extracted': 'لم يتم العثور على نص',
     },
     'en': {
         # Title
@@ -328,6 +336,14 @@ TRANSLATIONS = {
         'dev_by': 'Developed by:',
         'dev_charity': 'Developed as a charity work\n100% Free & Offline without internet',
         'dev_rights': '© All Rights Reserved 2026',
+        
+        # Snipping Tool
+        'tab_snipping': 'Quick Snip',
+        'take_snip': 'Capture Text from Screen ✂️',
+        'snip_desc': 'Click the button, select text with your mouse, and it will be extracted instantly!',
+        'copy_text': 'Copy Text',
+        'text_copied': 'Text copied!',
+        'no_text_extracted': 'No text extracted',
     }
 }
 

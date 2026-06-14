@@ -17,6 +17,7 @@ import logging
 from app.gui.styles import DARK_THEME_QSS, COLORS
 from app.gui.pdf_tab import PDFTab
 from app.gui.image_tab import ImageTab
+from app.gui.snipping_tab import SnippingTab
 from app.gui.settings_tab import SettingsTab, load_settings, save_settings
 from app.gui.workers import OCRLoadWorker
 from app.utils.arabic_utils import tr
@@ -100,12 +101,14 @@ class MainWindow(QMainWindow):
         # إنشاء التبويبات
         self._pdf_tab = PDFTab(self.ocr_engine, self.image_processor, self.settings)
         self._image_tab = ImageTab(self.ocr_engine, self.image_processor, self.settings)
+        self._snipping_tab = SnippingTab(self.ocr_engine, self.image_processor, self.settings)
         self._settings_tab = SettingsTab(self.settings)
         self._settings_tab.language_changed.connect(self._on_language_changed)
         self._settings_tab.settings_changed.connect(self._on_settings_changed)
         
         self._stack.addWidget(self._pdf_tab)
         self._stack.addWidget(self._image_tab)
+        self._stack.addWidget(self._snipping_tab)
         self._stack.addWidget(self._settings_tab)
         
         content_layout.addWidget(self._stack, 1)
@@ -163,6 +166,7 @@ class MainWindow(QMainWindow):
         nav_items = [
             ("📄", tr('tab_pdf', self._current_lang)),
             ("🖼️", tr('tab_images', self._current_lang)),
+            ("✂️", tr('tab_snipping', self._current_lang)),
             ("⚙️", tr('tab_settings', self._current_lang)),
         ]
         
@@ -347,6 +351,7 @@ class MainWindow(QMainWindow):
         titles = [
             tr('tab_pdf', self._current_lang),
             tr('tab_images', self._current_lang),
+            tr('tab_snipping', self._current_lang),
             tr('tab_settings', self._current_lang),
         ]
         if index < len(titles):
@@ -374,6 +379,7 @@ class MainWindow(QMainWindow):
         nav_texts = [
             ("📄", tr('tab_pdf', lang)),
             ("🖼️", tr('tab_images', lang)),
+            ("✂️", tr('tab_snipping', lang)),
             ("⚙️", tr('tab_settings', lang)),
         ]
         for i, (icon, text) in enumerate(nav_texts):
@@ -381,7 +387,7 @@ class MainWindow(QMainWindow):
         
         # تحديث عنوان الصفحة
         current_idx = self._stack.currentIndex()
-        titles = [tr('tab_pdf', lang), tr('tab_images', lang), tr('tab_settings', lang)]
+        titles = [tr('tab_pdf', lang), tr('tab_images', lang), tr('tab_snipping', lang), tr('tab_settings', lang)]
         if current_idx < len(titles):
             self._page_title.setText(titles[current_idx])
         
@@ -402,6 +408,7 @@ class MainWindow(QMainWindow):
         # تحديث التبويبات
         self._pdf_tab.update_language(lang)
         self._image_tab.update_language(lang)
+        self._snipping_tab.update_language(lang)
         self._settings_tab.update_language(lang)
     
     def _on_settings_changed(self, settings: dict):

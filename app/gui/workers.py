@@ -207,3 +207,45 @@ class ImageConversionWorker(QThread):
         except Exception as e:
             logger.error(f"فشل تحويل الصور: {e}")
             self.finished.emit(False, f"فشل التحويل: {str(e)}")
+
+
+class SnippetWorker(QThread):
+    """استخراج النص من صورة مقصوصة (Snipping Tool) في الخلفية."""
+    finished = Signal(bool, str)  # success, extracted_text/error
+    
+    def __init__(
+        self,
+        image_np,
+        ocr_engine: OCREngine,
+        image_processor: ImageProcessor,
+        mode: str = 'printed'
+    ):
+        super().__init__()
+        self.image_np = image_np
+        self.ocr_engine = ocr_engine
+        self.image_processor = image_processor
+        self.mode = mode
+        
+    def run(self):
+        try:
+            # معالجة الصورة باستخدام numpy array مباشرة (بدلاً من المسار)
+            # بما أن الصورة تأتي من الشاشة، فهي عادة واضحة، لكن يمكن تمريرها لمعالج الصور
+            # ImageProcessor.load_and_preprocess usually takes a path. We might need to bypass it or use a temp file.
+            # However, for screen snippets, the quality is usually native. Let's just pass it to OCR.
+            # But let's apply simple preprocessing if needed. 
+            import cv2
+            import numpy as np
+            
+            processed = self.image_np
+            # إذا كانت BGR نحولها إلى رمادي لزيادة التباين قليلاً (اختياري)
+            # processed = cv2.cvtColor(self.image_np, cv2.COLOR_BGR2GRAY)
+            
+            text = self.ocr_engine.extract_text_simple(processed)
+            if not text or not text.strip():
+                self.finished.emit(False, "لم يتم العثور على نص")
+            else:
+                self.finished.emit(True, text)
+        except Exception as e:
+            logger.error(f"فشل استخراج النص من اللقطة: {e}")
+            self.finished.emit(False, f"خطأ: {str(e)}")
+
