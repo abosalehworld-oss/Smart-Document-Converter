@@ -14,6 +14,7 @@ import logging
 
 from app.core.ocr_engine import OCREngine
 from app.core.image_processor import ImageProcessor
+from app.utils.arabic_utils import is_arabic
 
 logger = logging.getLogger(__name__)
 
@@ -29,11 +30,13 @@ class PDFProcessor:
         self,
         ocr_engine: OCREngine,
         image_processor: ImageProcessor,
-        dpi: int = 300
+        dpi: int = 300,
+        preprocessing: bool = True
     ):
         self.ocr_engine = ocr_engine
         self.image_processor = image_processor
         self.dpi = dpi
+        self.preprocessing = preprocessing
         self._doc = None
         self._current_path = None
     
@@ -136,7 +139,7 @@ class PDFProcessor:
             # تحويل لصورة بدقة عالية
             zoom = self.dpi / 72  # 72 هو الدقة الافتراضية لـ PDF
             mat = fitz.Matrix(zoom, zoom)
-            pix = page.get_pixmap(matrix=mat)
+            pix = page.get_pixmap(matrix=mat, alpha=False)
             
             # تحويل لـ NumPy array
             img_data = pix.tobytes("ppm")
@@ -161,16 +164,13 @@ class PDFProcessor:
         Returns:
             النص المستخرج
         """
-        # تم إيقاف استخراج النص الرقمي المباشر لأن مكتبة PyMuPDF 
-        # تقوم بعكس الحروف العربية المركبة (مثل مح، مج) في بعض الخطوط.
-        # بدلاً من ذلك، سنجبر البرنامج على تحويل الصفحة لصورة عالية الدقة
-        # واستخدام محرك Tesseract OCR الذي يقرأ الكلمات العربية بشكل مثالي بالنظر.
-        
-        # if self.has_text_layer(page_num):
-        #     text = self.extract_digital_text(page_num)
-        #     if text:
-        #         logger.debug(f"صفحة {page_num + 1}: نص رقمي ({len(text)} حرف)")
-        #         return text
+        # ذكي: يستخرج النص الرقمي مباشرة إذا كان إنجليزياً ولا يحتوي على حروف عربية
+        # لتجنب مشاكل عكس الحروف العربية في PyMuPDF.
+        if self.has_text_layer(page_num):
+            text = self.extract_digital_text(page_num)
+            if text and not is_arabic(text):
+                logger.debug(f"صفحة {page_num + 1}: تم استخراج نص رقمي إنجليزي ({len(text)} حرف)")
+                return text
         
         # 2. استخدام OCR للصفحات الممسوحة ضوئياً
         logger.debug(f"صفحة {page_num + 1}: استخدام OCR")
@@ -178,14 +178,16 @@ class PDFProcessor:
         # تحويل الصفحة لصورة
         image = self.page_to_image(page_num)
         
-        # معالجة الصورة
-        import cv2
-        if len(image.shape) == 3:
-            bgr_image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        if self.preprocessing:
+            # معالجة الصورة
+            import cv2
+            if len(image.shape) == 3:
+                bgr_image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+            else:
+                bgr_image = image
+            processed = self.image_processor.enhance_for_ocr(bgr_image, mode)
         else:
-            bgr_image = image
-        
-        processed = self.image_processor.enhance_for_ocr(bgr_image, mode)
+            processed = image
         
         # استخراج النص
         text = self.ocr_engine.extract_text_simple(processed)
@@ -248,7 +250,7 @@ class PDFProcessor:
         
         try:
             page = self._doc[page_num]
-            pix = page.get_pixmap(matrix=fitz.Matrix(0.5, 0.5))
+            pix = page.get_pixmap(matrix=fitz.Matrix(0.5, 0.5), alpha=False)
             img_data = pix.tobytes("ppm")
             img = Image.open(io.BytesIO(img_data))
             img.thumbnail((max_size, max_size))

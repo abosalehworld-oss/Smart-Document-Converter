@@ -23,6 +23,8 @@ class WindowsOCREngine:
     def __init__(self, languages: list = None):
         self.languages = languages or ['ar', 'en']
         self._engine = None
+        self._engine_ar = None
+        self._engine_en = None
         self._is_loaded = False
         
     def load(self, progress_callback=None):
@@ -35,35 +37,65 @@ class WindowsOCREngine:
             
             available_langs = OcrEngine.available_recognizer_languages
             
-            lang = None
-            if 'ar' in self.languages:
-                # Find any available Arabic language pack (ar-SA, ar-EG, ar-AE, etc.)
-                for l in available_langs:
-                    if l.language_tag.startswith('ar'):
-                        lang = l
-                        break
+            self._engine_ar = None
+            self._engine_en = None
             
-            if not lang and 'en' in self.languages:
-                for l in available_langs:
-                    if l.language_tag.startswith('en'):
-                        lang = l
-                        break
-                        
-            if not lang:
-                # Fallback to creating Language object to trigger native error if missing
+            lang_ar = None
+            lang_en = None
+            
+            for l in available_langs:
+                if l.language_tag.startswith('ar'):
+                    lang_ar = l
+                elif l.language_tag.startswith('en'):
+                    lang_en = l
+            
+            # Load Arabic if requested
+            if 'ar' in self.languages:
+                if lang_ar:
+                    self._engine_ar = OcrEngine.try_create_from_language(lang_ar)
+                else:
+                    try:
+                        fallback_ar = Language('ar-SA')
+                        if OcrEngine.is_language_supported(fallback_ar):
+                            self._engine_ar = OcrEngine.try_create_from_language(fallback_ar)
+                            lang_ar = fallback_ar
+                    except Exception:
+                        pass
+            
+            # Load English if requested
+            if 'en' in self.languages:
+                if lang_en:
+                    self._engine_en = OcrEngine.try_create_from_language(lang_en)
+                else:
+                    try:
+                        fallback_en = Language('en-US')
+                        if OcrEngine.is_language_supported(fallback_en):
+                            self._engine_en = OcrEngine.try_create_from_language(fallback_en)
+                            lang_en = fallback_en
+                    except Exception:
+                        pass
+            
+            # Fallback if both requested but neither loaded
+            if ('ar' in self.languages or 'en' in self.languages) and not self._engine_ar and not self._engine_en:
                 lang_tag = 'ar-SA' if 'ar' in self.languages else 'en-US'
                 lang = Language(lang_tag)
                 if not OcrEngine.is_language_supported(lang):
                     raise RuntimeError(f"اللغة {lang_tag} غير مدعومة في نظام ويندوز الحالي. يرجى تثبيت حزمة اللغة.")
-                
-            self._engine = OcrEngine.try_create_from_language(lang)
-            if not self._engine:
-                raise RuntimeError("فشل تهيئة محرك ويندوز للتعرف على النصوص.")
-                
+                self._engine = OcrEngine.try_create_from_language(lang)
+            
             self._is_loaded = True
+            
+            loaded_names = []
+            if self._engine_ar:
+                loaded_names.append(lang_ar.display_name if lang_ar else "العربية")
+            if self._engine_en:
+                loaded_names.append(lang_en.display_name if lang_en else "الإنجليزية")
+            if self._engine:
+                loaded_names.append("الافتراضي")
+                
             if progress_callback:
-                progress_callback(f"تم تحميل محرك ويندوز للغة: {lang.display_name}")
-            logger.info(f"Windows OCR Engine loaded for {lang.language_tag}.")
+                progress_callback(f"تم تحميل محرك ويندوز للغة: {' و '.join(loaded_names)}")
+            logger.info(f"Windows OCR Engines loaded: {', '.join(loaded_names)}.")
         except ImportError as e:
             raise RuntimeError("مكتبة winsdk/winrt غير مثبتة.") from e
         except Exception as e:
@@ -105,8 +137,26 @@ class WindowsOCREngine:
         software_bitmap = await decoder.get_software_bitmap_async()
 
         # Recognize Text
-        result = await self._engine.recognize_async(software_bitmap)
-        return result
+        if self._engine_ar and self._engine_en:
+            result_ar = await self._engine_ar.recognize_async(software_bitmap)
+            ar_text = "".join(w.text for line in result_ar.lines for w in line.words)
+            if is_arabic(ar_text):
+                return result_ar
+            else:
+                try:
+                    result_en = await self._engine_en.recognize_async(software_bitmap)
+                    return result_en
+                except Exception as e:
+                    logger.warning(f"Failed English OCR, using Arabic: {e}")
+                    return result_ar
+        elif self._engine_ar:
+            return await self._engine_ar.recognize_async(software_bitmap)
+        elif self._engine_en:
+            return await self._engine_en.recognize_async(software_bitmap)
+        elif self._engine:
+            return await self._engine.recognize_async(software_bitmap)
+        else:
+            raise RuntimeError("لم يتم تحميل محرك التعرف لويندوز.")
 
     def extract_text_simple(self, image: np.ndarray) -> str:
         if not self._is_loaded:

@@ -29,7 +29,10 @@ class OCRLoadWorker(QThread):
     def run(self):
         try:
             self.ocr_engine.load(progress_callback=lambda msg: self.progress.emit(msg))
-            self.finished.emit(True, "تم تحميل محرك التعرف بنجاح")
+            active_engine_name = "Tesseract"
+            if self.ocr_engine._active_engine:
+                active_engine_name = type(self.ocr_engine._active_engine).__name__
+            self.finished.emit(True, active_engine_name)
         except Exception as e:
             self.finished.emit(False, f"فشل تحميل محرك التعرف: {str(e)}")
 
@@ -48,7 +51,8 @@ class PDFConversionWorker(QThread):
         pages: list = None,
         mode: str = 'printed',
         font_name: str = 'Simplified Arabic',
-        font_size: int = 14
+        font_size: int = 14,
+        preprocessing: bool = True
     ):
         super().__init__()
         self.pdf_path = pdf_path
@@ -59,6 +63,7 @@ class PDFConversionWorker(QThread):
         self.mode = mode
         self.font_name = font_name
         self.font_size = font_size
+        self.preprocessing = preprocessing
         self._cancelled = False
         self._mutex = QMutex()
     
@@ -77,7 +82,11 @@ class PDFConversionWorker(QThread):
     def run(self):
         try:
             # إنشاء معالج PDF
-            pdf_proc = PDFProcessor(self.ocr_engine, self.image_processor)
+            pdf_proc = PDFProcessor(
+                self.ocr_engine,
+                self.image_processor,
+                preprocessing=self.preprocessing
+            )
             
             # فتح الملف
             self.progress.emit(0, 1, "جاري فتح ملف PDF...")

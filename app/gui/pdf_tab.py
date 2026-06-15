@@ -312,7 +312,8 @@ class PDFTab(QWidget):
             pages=pages,
             mode=mode,
             font_name=self.settings.get('font_name', 'Simplified Arabic'),
-            font_size=self.settings.get('font_size', 14)
+            font_size=self.settings.get('font_size', 14),
+            preprocessing=self.settings.get('preprocessing', True)
         )
         self._worker.progress.connect(self._on_progress)
         self._worker.finished.connect(self._on_finished)

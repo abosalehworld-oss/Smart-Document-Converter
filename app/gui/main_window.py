@@ -393,7 +393,11 @@ class MainWindow(QMainWindow):
         
         # تحديث حالة OCR
         if self.ocr_engine.is_loaded:
-            self._ocr_status.setText("✅ " + tr('ocr_loaded', lang))
+            active_name = type(self.ocr_engine._active_engine).__name__ if self.ocr_engine._active_engine else ""
+            engine_name = "محرك الويندوز الذكي" if "Windows" in active_name else "محرك Tesseract البديل"
+            if lang == 'en':
+                engine_name = "Windows OCR Engine" if "Windows" in active_name else "Tesseract OCR Engine"
+            self._ocr_status.setText(f"✅ {engine_name}")
         else:
             self._ocr_status.setText("⏳ " + tr('loading_ocr', lang))
         
@@ -442,7 +446,10 @@ class MainWindow(QMainWindow):
     def _on_ocr_loaded(self, success: bool, message: str):
         """عند اكتمال تحميل OCR."""
         if success:
-            self._ocr_status.setText("✅ " + tr('ocr_loaded', self._current_lang))
+            engine_name = "محرك الويندوز الذكي" if "Windows" in message else "محرك Tesseract البديل"
+            if self._current_lang == 'en':
+                engine_name = "Windows OCR Engine" if "Windows" in message else "Tesseract OCR Engine"
+            self._ocr_status.setText(f"✅ {engine_name}")
             self._ocr_status.setStyleSheet(f"color: {COLORS['success']}; font-size: 12px; border: none;")
             self._status_label.setText(tr('ready', self._current_lang))
         else:
