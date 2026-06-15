@@ -89,9 +89,9 @@ where internet access is unavailable and data security is paramount.
 │  │ pdf_processor.py │  │     word_generator.py            │     │
 │  │                  │  │                                  │     │
 │  │  - PyMuPDF/fitz  │  │  - python-docx                  │     │
-│  │  - Smart detect: │  │  - Native RTL & LTR Auto-switch │     │
-│  │    digital text  │  │  - Arabic CS fonts              │     │
-│  │    vs scanned    │  │  - Exact Layout Preservation    │     │
+│  │  - Strict visual  │  │  - Native RTL & LTR Auto-switch │     │
+│  │    rendering and │  │  - Arabic CS fonts              │     │
+│  │    OCR on all pgs│  │  - Exact Layout Preservation    │     │
 │  │  - 300 DPI render│  │    (Line-by-Line mapping)       │     │
 │  │  - Page-by-page  │  │  - .docx output                 │     │
 │  └──────────────────┘  └──────────────────────────────────┘     │
@@ -140,7 +140,7 @@ where internet access is unavailable and data security is paramount.
 │   │   ├── ocr_engine.py           # Dual Engine Router (Windows OCR + Tesseract)
 │   │   ├── windows_ocr.py          # Native WinRT OCR (Arabic + English concurrent engine loading with content-aware dynamic selection)
 │   │   ├── image_processor.py      # OpenCV image enhancement (No morphological erosion to preserve WinRT OCR accuracy)
-│   │   ├── pdf_processor.py        # PyMuPDF PDF handling (transparency rendering fix & high-performance digital English text fallback)
+│   │   ├── pdf_processor.py        # PyMuPDF PDF handling (transparency rendering fix & guaranteed OCR processing on all pages)
 │   │   └── word_generator.py       # python-docx Word creation
 │   │
 │   ├── gui/                         # 🎨 PySide6 GUI components
