@@ -51,7 +51,7 @@ if exist "C:\Program Files\Tesseract-OCR" (
         copy /Y "ara.traineddata" "%TESSDIR%\tessdata\ara.traineddata" >nul
         echo  [OK] Tesseract copied from Program Files - With standard Arabic Model
     ) else (
-        echo  [OK] Tesseract copied from Program Files (Make sure Arabic model is installed)
+        echo  [OK] Tesseract copied from Program Files - Make sure Arabic model is installed
     )
 ) else (
     color 0C
