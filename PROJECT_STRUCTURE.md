@@ -266,11 +266,10 @@ label.setText(tr('start_conversion', 'en'))  # → "Start Conversion"
 ```
 User selects PDF → security.validate_file_integrity()
                  → PDFProcessor.open_pdf()
-                 → For each page:
-                     → has_text_layer()? → extract_digital_text() (fast, no OCR)
-                     → No text layer?    → page_to_image(300 DPI)
-                                         → ImageProcessor.enhance_for_ocr()
-                                         → OCREngine.extract_text_simple()
+                  → For each page:
+                      → page_to_image(300 DPI)
+                      → ImageProcessor.enhance_for_ocr() (if enabled)
+                      → OCREngine.extract_text_simple() (Windows OCR Engine)
                  → WordGenerator.add_page_text() (auto RTL detection)
                  → WordGenerator.save() → User picks save location
                  → TempFileManager.cleanup() (secure delete)

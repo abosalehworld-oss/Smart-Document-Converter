@@ -155,7 +155,7 @@ class PDFProcessor:
     def process_page(self, page_num: int, mode: str = 'printed') -> str:
         """
         معالجة صفحة واحدة واستخراج نصها.
-        ذكي: يستخدم النص الرقمي إذا وُجد، وإلا يستخدم OCR.
+        تمر الصفحة دائماً بمحرك التعرف لضمان جودة ودقة النتائج.
         
         Args:
             page_num: رقم الصفحة
@@ -164,15 +164,7 @@ class PDFProcessor:
         Returns:
             النص المستخرج
         """
-        # ذكي: يستخرج النص الرقمي مباشرة إذا كان إنجليزياً ولا يحتوي على حروف عربية
-        # لتجنب مشاكل عكس الحروف العربية في PyMuPDF.
-        if self.has_text_layer(page_num):
-            text = self.extract_digital_text(page_num)
-            if text and not is_arabic(text):
-                logger.debug(f"صفحة {page_num + 1}: تم استخراج نص رقمي إنجليزي ({len(text)} حرف)")
-                return text
-        
-        # 2. استخدام OCR للصفحات الممسوحة ضوئياً
+        # استخدام OCR لجميع الصفحات لضمان دقة استخراج النصوص وعدم وجود صفحات فارغة أو حروف مكسرة
         logger.debug(f"صفحة {page_num + 1}: استخدام OCR")
         
         # تحويل الصفحة لصورة
