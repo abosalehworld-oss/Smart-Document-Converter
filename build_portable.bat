@@ -95,13 +95,11 @@ REM Create a desktop shortcut with the correct icon using VBScript
 set VBS_FILE="%OUTDIR%\create_shortcut.vbs"
 (
 echo Set oWS = WScript.CreateObject^("WScript.Shell"^)
-echo Set fso = CreateObject^("Scripting.FileSystemObject"^)
-echo currentDir = fso.GetAbsolutePathName^("."^)
-echo sLinkFile = currentDir ^& "\Smart Document Converter.lnk"
+echo sLinkFile = "%~dp0Smart Document Converter.lnk"
 echo Set oLink = oWS.CreateShortcut^(sLinkFile^)
-echo oLink.TargetPath = currentDir ^& "\Run_Program.bat"
-echo oLink.WorkingDirectory = currentDir
-echo oLink.IconLocation = currentDir ^& "\app\assets\icon.ico"
+echo oLink.TargetPath = "%~dp0%OUTDIR%\Run_Program.bat"
+echo oLink.WorkingDirectory = "%~dp0%OUTDIR%"
+echo oLink.IconLocation = "%~dp0%OUTDIR%\app\assets\icon.ico"
 echo oLink.Save
 ) > %VBS_FILE%
 cscript //nologo %VBS_FILE%
