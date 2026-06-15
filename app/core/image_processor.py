@@ -85,7 +85,7 @@ class ImageProcessor:
             gray = self._gentle_denoise(gray, strength=3)
         elif mode == self.MODE_GRAPHIC:
             # التصاميم الملونة والإعلانات: نتجنب الـ binarize لأنه يفسد التدرجات اللونية والعلامات المائية
-            # نكتفي بتحسين التباين قليلاً وترك Tesseract يتعامل معها بذكائه الداخلي (Otsu)
+            # نكتفي بتحسين التباين قليلاً وترك محرك التعرف الذكي (ويندوز) يتعامل معها بذكائه الداخلي
             gray = self._enhance_contrast(gray, clip_limit=1.5)
         elif mode == self.MODE_SNIPPET:
             # لقطات الشاشة تكون ديجيتال ونقية، تحتاج فقط إلى تكبير وتباين بدون Erode
